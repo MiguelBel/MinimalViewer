@@ -1,0 +1,23 @@
+<html>
+<head>
+
+  <title>Hackernews</title>
+
+  <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>
+  <link href='css/app.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <div class="story-container" data-monkberry="story">
+    <a id="story-link" href="{{ url }}" target="_newtab">{{ title }}</a>
+    <p>{{ domain }}</p>
+  </div>
+
+  <div class="counter" data-monkberry="counter">
+    <p>{{ current }}/{{ total }}</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aja/0.4.1/aja.js"></script>
+  <script src="https://cdn.jsdelivr.net/monkberry-standalone/latest/monkberry.min.js"></script>
+  <script src="js/app.js" type="text/javascript"></script>
+</body>
+</html>
