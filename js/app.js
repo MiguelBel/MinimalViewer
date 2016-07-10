@@ -2,7 +2,7 @@ var current_story = 0
 var stories;
 
 aja()
-  .url('http://hn.algolia.com/api/v1/search?tags=front_page')
+  .url('https://polar-ridge-70990.herokuapp.com/')
   .on('success', function(all_stories){
     stories = all_stories;
     loadFirstStory();
@@ -26,12 +26,12 @@ function loadPreviousStory(){
 }
 
 function loadStory(index){
-  story = stories['hits'][index]
+  story = stories[index]
   var story_view = Monkberry.getView('story');
-  story_view.update({ url: story['url'], domain: getDomain(story['url']), title: story['title'] });
+  story_view.update({ url: story['link'], domain: getDomain(story['link']), title: story['title'] });
 
   var counter_view = Monkberry.getView('counter');
-  counter_view.update({ current: current_story + 1, total: stories['hits'].length });
+  counter_view.update({ current: current_story + 1, total: stories.length });
 }
 
 function openCurrentStory(){
