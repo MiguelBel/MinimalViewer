@@ -4,15 +4,27 @@ var stories;
 aja()
   .url('https://polar-ridge-70990.herokuapp.com/')
   .on('success', function(all_stories){
-    stories = all_stories;
+    stories = non_read_stories(all_stories);
     loadFirstStory();
   })
   .go();
 
 document.onkeydown = checkKey;
 
+function non_read_stories(stories){
+  non_read = []
+  stories.forEach(function(story){
+    if(!localStorage.getItem(story['link'])){
+     non_read.push(story)
+    }
+  })
+
+  return non_read;
+}
+
 function loadFirstStory(){
-  loadStory(0);
+  document.getElementById('loading-image').style.visibility = 'hidden';
+ loadStory(0);
 }
 
 function loadNextStory(){
@@ -27,6 +39,11 @@ function loadPreviousStory(){
 
 function loadStory(index){
   story = stories[index]
+  if(story == undefined){
+    alert('There is nothing new for you');
+    return;
+  }
+  localStorage.setItem(story['link'], true);
   var story_view = Monkberry.getView('story');
   story_view.update({ url: story['link'], domain: getDomain(story['link']), title: story['title'] });
 
@@ -38,7 +55,7 @@ function openCurrentStory(){
   document.getElementById("story-link").click();
 }
 
-function checkKey(e) {
+function checkKey(e){
   left_arrow_code = '37'
   up_arrow_code = '38'
   right_arrow_code = '39'

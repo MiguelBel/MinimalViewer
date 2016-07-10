@@ -22,3 +22,9 @@ p{
   right: 10px;
   position: absolute;
 }
+
+.central-image{
+  position:absolute;
+  top: 40%;
+  left: 45%;
+}
