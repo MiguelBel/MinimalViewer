@@ -1,8 +1,14 @@
 var current_story = 0
 var stories;
+var mock_enabled = false;
+if(mock_enabled){
+  var API_URL = 'http://localhost:9292';
+}else{
+  var API_URL = 'https://polar-ridge-70990.herokuapp.com/';
+}
 
 aja()
-  .url('https://polar-ridge-70990.herokuapp.com/')
+  .url(API_URL)
   .on('success', function(all_stories){
     stories = non_read_stories(all_stories);
     loadFirstStory();
@@ -14,7 +20,7 @@ document.onkeydown = checkKey;
 function non_read_stories(stories){
   non_read = []
   stories.forEach(function(story){
-    if(!localStorage.getItem(story['link'])){
+    if(!localStorage.getItem(story['url'])){
      non_read.push(story)
     }
   })
@@ -43,16 +49,16 @@ function loadStory(index){
     alert('There is nothing new for you');
     return;
   }
-  localStorage.setItem(story['link'], true);
+  localStorage.setItem(story['url'], true);
   var story_view = Monkberry.getView('story');
-  story_view.update({ url: story['link'], domain: getDomain(story['link']), title: story['title'] });
+  story_view.update({ url: story['url'], domain: getDomain(story['url']), title: story['title'] });
 
   var counter_view = Monkberry.getView('counter');
   counter_view.update({ current: current_story + 1, total: stories.length });
 }
 
 function openCurrentStory(){
-  document.getElementById("story-link").click();
+  document.getElementById("story-url").click();
 }
 
 function checkKey(e){
