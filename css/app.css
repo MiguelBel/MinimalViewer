@@ -1,29 +1,29 @@
-.story-container{
+.story-link {
   text-align: center;
-  position: relative;
+  position: absolute;
   top: 40%;
-  transform: translateY(-50%);
+  width: 99%;
 }
 
-a{
+a {
   font-family: 'Libre Baskerville', serif;
   color: black;
   text-decoration: none;
   font-size: 40px;
 }
 
-p{
+p {
   font-family: 'Libre Baskerville', serif;
   color: black;
 }
 
-.counter{
+.counter {
   bottom: 0px;
   right: 10px;
   position: absolute;
 }
 
-.central-image{
+.central-image {
   position:absolute;
   top: 40%;
   left: 45%;
