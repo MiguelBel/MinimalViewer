@@ -1,89 +1,107 @@
-var current_story = 0
-var stories;
-var mock_enabled = false;
-if(mock_enabled){
-  var API_URL = 'http://localhost:9292';
-}else{
-  var API_URL = 'https://polar-ridge-70990.herokuapp.com/';
-}
+const Viewer = {
+  create (selector, { url }) {
+    Downloader.create(url, this.store.bind(this))
+    this.SELECTOR = selector
+  },
 
-aja()
-  .url(API_URL)
-  .on('success', function(all_stories){
-    stories = non_read_stories(all_stories);
-    loadFirstStory();
-  })
-  .go();
+  store (stories) {
+    this.STORIES = this.discardRead(stories)
+    this.setup()
+    this.update()
+  },
 
-document.onkeydown = checkKey;
+  discardRead (stories) {
+    readStories = JSON.parse(localStorage.getItem('viewer')) || []
+    return stories.filter(story =>
+      readStories.indexOf(story.id) == -1
+    )
+  },
 
-function non_read_stories(stories){
-  non_read = []
-  stories.forEach(function(story){
-    if(!localStorage.getItem(story['url'])){
-     non_read.push(story)
+  show (story) {
+    let link = document.querySelector(`${this.SELECTOR} #story-url`)
+    link.href = story.url
+    link.innerText = story.title
+
+    let domain = document.querySelector(`${this.SELECTOR} #story-domain`)
+    domain.innerText = this.domain(story.url)
+
+    let counter = document.querySelector(`${this.SELECTOR} #stories-counter`)
+    counter.innerText = `${this.INDEX + 1} / ${this.STORIES.length}`
+
+    let viewedItems = JSON.parse(localStorage.getItem('viewer')) || []
+    viewedItems.push(story.id)
+    localStorage.setItem('viewer', JSON.stringify(viewedItems));
+  },
+
+  update () {
+
+    const story = this.STORIES[this.INDEX]
+    this.show(story)
+  },
+
+  next () {
+    if (this.INDEX < (this.STORIES.length - 1)) {
+      this.INDEX += 1
     }
-  })
+    this.update()
+  },
 
-  return non_read;
-}
+  prev () {
+    if (this.INDEX > 0) {
+      this.INDEX -= 1
+    }
+    this.update()
+  },
 
-function loadFirstStory(){
-  document.getElementById('loading-image').style.visibility = 'hidden';
- loadStory(0);
-}
+  open (url) {
+    window.open(url)
+  },
 
-function loadNextStory(){
-  current_story = current_story + 1;
-  loadStory(current_story);
-}
+  setup () {
+    document.getElementById('loading-image').setAttribute('hidden', true)
+    this.INDEX = 0
+    this.addHandlers()
+  },
 
-function loadPreviousStory(){
-  current_story = current_story - 1;
-  loadStory(current_story);
-}
+  addHandlers () {
+    window.onkeydown = (e) => {
+      leftArrowCode = '37'
+      upArrowCode = '38'
+      rightArrowCode = '39'
 
-function loadStory(index){
-  story = stories[index]
-  if(story == undefined){
-    alert('There is nothing new for you');
-    return;
-  }
-  localStorage.setItem(story['url'], true);
-  var story_view = Monkberry.getView('story');
-  story_view.update({ url: story['url'], domain: getDomain(story['url']), title: story['title'] });
+      if(e.keyCode == leftArrowCode){
+        this.prev()
+      }
 
-  var counter_view = Monkberry.getView('counter');
-  counter_view.update({ current: current_story + 1, total: stories.length });
-}
+      if(e.keyCode == upArrowCode){
+        this.open(this.STORIES[this.INDEX].url)
+      }
 
-function openCurrentStory(){
-  document.getElementById("story-url").click();
-}
+      if(e.keyCode == rightArrowCode){
+        this.next()
+      }
+    }
+  },
 
-function checkKey(e){
-  left_arrow_code = '37'
-  up_arrow_code = '38'
-  right_arrow_code = '39'
+  domain (url) {
+    var matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+    var domain = matches && matches[1];
 
-  e = e || window.event;
-
-  if(e.keyCode == left_arrow_code){
-    loadPreviousStory();
-  }
-
-  if(e.keyCode == up_arrow_code){
-    openCurrentStory();
-  }
-
-  if(e.keyCode == right_arrow_code){
-    loadNextStory();
+    return domain;
   }
 }
 
-function getDomain(url){
-  var matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
-  var domain = matches && matches[1];
+const Downloader = {
+  create (url, fn) {
+    this.API_URL = url
+    this.download_stories(fn)
+  },
 
-  return domain;
+  download_stories (fn) {
+    fetch(this.API_URL).then(response => {
+      response.json().then(parsed =>
+        fn(parsed)
+      )
+    })
+  }
 }
