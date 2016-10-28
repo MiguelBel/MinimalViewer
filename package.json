@@ -2,9 +2,9 @@
   "name": "hackernewsviewer",
   "version": "0.1.0",
   "description": "Simple HackerNews viewer",
-  "main": "webpack main.js bundle.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "webpack --watch"
   },
   "repository": {
     "type": "git",
