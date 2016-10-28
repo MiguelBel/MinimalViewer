@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 const Viewer = {
   create (selector, { url }) {
     Downloader.create(url, this.store.bind(this))
@@ -105,3 +108,16 @@ const Downloader = {
     })
   }
 }
+
+class Index extends React.Component {
+  render() {
+    return (
+      <p>Hello world</p>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Index />,
+  document.getElementById('root')
+);

@@ -1,0 +1,27 @@
+{
+  "name": "hackernewsviewer",
+  "version": "0.1.0",
+  "description": "Simple HackerNews viewer",
+  "main": "webpack main.js bundle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiguelBel/HackerNewsViewer.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MiguelBel/HackerNewsViewer/issues"
+  },
+  "homepage": "https://github.com/MiguelBel/HackerNewsViewer#readme",
+  "dependencies": {
+    "babel-core": "^6.18.0",
+    "babel-loader": "^6.2.7",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2"
+  }
+}
