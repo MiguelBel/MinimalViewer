@@ -81,6 +81,46 @@ const Viewer = {
         this.next()
       }
     }
+
+    window.addEventListener('touchstart', handleTouchStart.bind(this), false);
+    window.addEventListener('touchmove', handleTouchMove.bind(this), false);
+    window.addEventListener('touchend', handleTouchEnd.bind(this), false);
+
+    function handleTouchEnd(e) {
+      if (!this.touch.current.x) {
+        return this.open(this.STORIES[this.INDEX].url)
+      }
+
+      const story = document.querySelector(`${this.SELECTOR} #story-link`)
+      story.style.transform = ''
+
+      if (this.touch.current.x < this.touch.start.x) {
+        this.next()
+      } else {
+        this.prev()
+      }
+    }
+
+    function handleTouchStart(e) {
+      this.touch = {
+        start: {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY
+        },
+        current: {}
+      }
+    }
+
+    function handleTouchMove(e) {
+      const story = document.querySelector(`${this.SELECTOR} #story-link`)
+      const xDiff = e.touches[0].clientX - this.touch.start.x
+
+      this.touch.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY
+      }
+      story.style.transform = `translateX(${xDiff}px)`
+    }
   },
 
   domain (url) {
