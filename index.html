@@ -7,20 +7,9 @@
   <link href='css/app.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
-  <img src='img/loading.gif' class="central-image" id="loading-image">
-  <div id='story-container'>
-    <div class='story-link'>
-      <a id='story-url'></a>
-      <p id='story-domain'></p>
-    </div>
+  <div id="root">
 
-    <div class='counter'>
-      <p id='stories-counter'></p>
-    </div>
   </div>
-  <script src='js/app.js'></script>
-  <script>
-    Viewer.create('#story-container', { url: 'https://polar-ridge-70990.herokuapp.com' })
-  </script>
+  <script src='bundle.js'></script>
 </body>
 </html>
