@@ -42,10 +42,49 @@ class ViewerComponent extends React.Component {
       }
     }
 
+    window.addEventListener('touchstart', this.handleTouchStart.bind(this), false);
+    window.addEventListener('touchmove', this.handleTouchMove.bind(this), false);
+    window.addEventListener('touchend', this.handleTouchEnd.bind(this), false);
+  }
+
+  handleTouchStart(e) {
+    this.touch = {
+      start: {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY
+      },
+      current: {}
+    }
+  }
+
+  handleTouchMove(e) {
+    const story = document.querySelector('#story-link')
+    const xDiff = e.touches[0].clientX - this.touch.start.x
+
+    this.touch.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    }
+
+    story.style.transform = `translateX(${xDiff}px)`
+  }
+
+  handleTouchEnd() {
+    if (!this.touch.current.x) {
+      return this._open(this.state.currentStory.url);
+    }
+
+    const story = document.querySelector('#story-link')
+    story.style.transform = ''
+
+    if (this.touch.current.x < this.touch.start.x) {
+      this._next()
+    } else {
+      this._prev()
+    }
   }
 
   render() {
-
     let { loading, currentStory, storyQueue, currentStoryIndex } = this.state;
 
     if (loading || currentStory === undefined) {
@@ -55,7 +94,7 @@ class ViewerComponent extends React.Component {
     }
 
     return (
-      <div id={'story-container'}>
+      <div id={'story-container'} className={'full-screen'}>
         <StoryComponent StoryUrl={currentStory.url} StoryDomain={currentStory.domain} StoryTitle={currentStory.title} />
         <div className={'counter'}>
           <p id={'stories-counter'}>{ currentStoryIndex + 1 }/{ storyQueue.length }</p>

@@ -5,7 +5,7 @@ class StoryComponent extends React.Component {
     let { StoryUrl, StoryDomain, StoryTitle } = this.props;
 
     return (
-      <div className={'story-link'}>
+      <div id={'story-link'}>
         <a href={ StoryUrl } id={'story-url'}>{ StoryTitle }</a>
         <p id={'story-domain'}>{ StoryDomain }</p>
       </div>

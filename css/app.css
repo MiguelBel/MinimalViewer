@@ -1,8 +1,16 @@
-.story-link {
+.full-screen {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#story-link {
   text-align: center;
-  position: absolute;
+  position: relative;
   top: 40%;
-  width: 99%;
+  -webkit-transform: translateY(-40%);
+  -ms-transform: translateY(-40%);
+  transform: translateY(-40%);
 }
 
 a {
