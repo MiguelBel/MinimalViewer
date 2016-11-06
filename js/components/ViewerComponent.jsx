@@ -101,7 +101,6 @@ class ViewerComponent extends React.Component {
       )
     }
 
-
     return (
       <div id={'story-container'} className={'full-screen'}>
         <StoryComponent StoryUrl={currentStory.url} StoryDomain={currentStory.domain} StoryTitle={currentStory.title} />
@@ -140,8 +139,12 @@ class ViewerComponent extends React.Component {
 
   _show(story) {
     let viewedItems = JSON.parse(localStorage.getItem('viewer')) || [];
-    viewedItems.push(story.id);
-    localStorage.setItem('viewer', JSON.stringify(viewedItems));
+    let story_id = story.id
+    let pending_to_register = viewedItems.indexOf(story_id) == -1
+    if(pending_to_register) {
+      viewedItems.push(story_id);
+      localStorage.setItem('viewer', JSON.stringify(viewedItems));
+    }
     this.setState({currentStory: story});
   }
 
