@@ -5,6 +5,7 @@ import Downloader from '../Downloader';
 import StoryComponent from './StoryComponent';
 import CounterComponent from './CounterComponent';
 import LoadingComponent from './LoadingComponent';
+import EmptyStoriesComponent from './EmptyStoriesComponent';
 
 class ViewerComponent extends React.Component {
 
@@ -17,7 +18,7 @@ class ViewerComponent extends React.Component {
     // Fetch data
     let { url } = this.props;
     // Show loader first
-    this.setState({loading: true});
+    this.setState({ loading: true, empty: false });
     // Load stories
     Downloader.create(url, (stories) => {
       // and then queue / show stories
@@ -86,7 +87,13 @@ class ViewerComponent extends React.Component {
   }
 
   render() {
-    let { loading, currentStory, storyQueue, currentStoryIndex } = this.state;
+    let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
+
+    if (empty) {
+      return (
+        <EmptyStoriesComponent />
+      )
+    }
 
     if (loading || currentStory === undefined) {
       return (
@@ -94,10 +101,11 @@ class ViewerComponent extends React.Component {
       )
     }
 
+
     return (
       <div id={'story-container'} className={'full-screen'}>
         <StoryComponent StoryUrl={currentStory.url} StoryDomain={currentStory.domain} StoryTitle={currentStory.title} />
-        <CounterComponent Current={currentStoryIndex + 1} Total={storyQueue.length} />
+        <CounterComponent Current={String(currentStoryIndex + 1)} Total={String(storyQueue.length)} />
       </div>
     )
   }
@@ -121,10 +129,13 @@ class ViewerComponent extends React.Component {
     this.setState({
       storyQueue: mappedStories,
       loading: false,
-      currentStoryIndex: 0,
+      empty: mappedStories.length == 0,
+      currentStoryIndex: 0
     });
 
-    this._show(mappedStories[0]);
+    if (mappedStories.length > 0) {
+      this._show(mappedStories[0]);
+    }
   }
 
   _show(story) {
