@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import Downloader from '../Downloader';
 
 import StoryComponent from './StoryComponent';
+import CounterComponent from './CounterComponent';
 import LoadingComponent from './LoadingComponent';
 
 class ViewerComponent extends React.Component {
@@ -96,9 +97,7 @@ class ViewerComponent extends React.Component {
     return (
       <div id={'story-container'} className={'full-screen'}>
         <StoryComponent StoryUrl={currentStory.url} StoryDomain={currentStory.domain} StoryTitle={currentStory.title} />
-        <div className={'counter'}>
-          <p id={'stories-counter'}>{ currentStoryIndex + 1 }/{ storyQueue.length }</p>
-        </div>
+        <CounterComponent Current={currentStoryIndex + 1} Total={storyQueue.length} />
       </div>
     )
   }
