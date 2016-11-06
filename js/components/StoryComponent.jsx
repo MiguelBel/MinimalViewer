@@ -2,21 +2,21 @@ import React, { PropTypes } from 'react';
 
 class StoryComponent extends React.Component {
   render() {
-    let { StoryUrl, StoryDomain, StoryTitle } = this.props;
+    let { Link, Title, Subtitle } = this.props;
 
     return (
       <div id={'story-link'} className={'story-link'}>
-        <a href={ StoryUrl } id={'story-url'} className={'story-link'}>{ StoryTitle }</a>
-        <p id={'story-domain'}>{ StoryDomain }</p>
+        <a href={ Link } id={'story-url'} className={'story-link'}>{ Title }</a>
+        <p id={'story-domain'}>{ Subtitle }</p>
       </div>
     )
   }
 }
 
 StoryComponent.propTypes = {
-  StoryUrl: PropTypes.string.isRequired,
-  StoryDomain: PropTypes.string.isRequired,
-  StoryTitle: PropTypes.string.isRequired
+  Title: PropTypes.string.isRequired,
+  Subtitle: PropTypes.string,
+  Link: PropTypes.string.isRequired
 };
 
 export default StoryComponent;

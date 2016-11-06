@@ -16,9 +16,9 @@ class ViewerComponent extends React.Component {
 
   componentWillMount() {
     // Fetch data
-    let { url } = this.props;
+    let { url, relations } = this.props;
     // Show loader first
-    this.setState({ loading: true, empty: false });
+    this.setState({ loading: true, empty: false, relations: relations });
     // Load stories
     Downloader.create(url, (stories) => {
       // and then queue / show stories
@@ -87,7 +87,7 @@ class ViewerComponent extends React.Component {
   }
 
   render() {
-    let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
+    let { loading, currentStory, storyQueue, currentStoryIndex, empty, relations } = this.state;
 
     if (empty) {
       return (
@@ -103,8 +103,16 @@ class ViewerComponent extends React.Component {
 
     return (
       <div id={'story-container'} className={'full-screen'}>
-        <StoryComponent StoryUrl={currentStory.url} StoryDomain={currentStory.domain} StoryTitle={currentStory.title} />
-        <CounterComponent Current={String(currentStoryIndex + 1)} Total={String(storyQueue.length)} />
+        <StoryComponent
+          Link={currentStory[relations.Link]}
+          Subtitle={currentStory[relations.Subtitle]}
+          Title={currentStory[relations.Title]}
+        />
+
+        <CounterComponent
+          Current={String(currentStoryIndex + 1)}
+          Total={String(storyQueue.length)}
+        />
       </div>
     )
   }
@@ -177,11 +185,16 @@ class ViewerComponent extends React.Component {
 }
 
 ViewerComponent.propTypes = {
-    url: PropTypes.string.isRequired
+  url: PropTypes.string.isRequired
 };
 
 ViewerComponent.defaultProps = {
-  url: 'https://polar-ridge-70990.herokuapp.com'
+  url: 'https://polar-ridge-70990.herokuapp.com',
+  relations: {
+    Title: 'title',
+    Subtitle: 'domain',
+    Link: 'url'
+  }
 };
 
 export default ViewerComponent;
