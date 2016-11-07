@@ -8,16 +8,15 @@ import LoadingComponent from './LoadingComponent';
 import EmptyStoriesComponent from './EmptyStoriesComponent';
 
 class ViewerComponent extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {};
   }
 
   componentWillMount() {
-    let { url, relations } = this.props;
+    let { url } = this.props;
 
-    this.setState({ loading: true, empty: false, relations: relations });
+    this.setState({ loading: true, empty: false });
 
     Downloader.create(url, (stories) => {
       this._store(stories);
@@ -84,7 +83,8 @@ class ViewerComponent extends React.Component {
   }
 
   render() {
-    let { loading, currentStory, storyQueue, currentStoryIndex, empty, relations } = this.state;
+    let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
+    let { relations } = this.props
 
     if (empty) {
       return (
@@ -115,7 +115,8 @@ class ViewerComponent extends React.Component {
   }
 
   _store(stories) {
-    const readStories = JSON.parse(localStorage.getItem('viewer')) || [];
+    let { identifier } = this.props
+    const readStories = JSON.parse(localStorage.getItem(`viewer_${identifier}`)) || [];
 
     const filteredStories = stories.filter(story => readStories.indexOf(story.id) == -1);
 
@@ -140,12 +141,13 @@ class ViewerComponent extends React.Component {
   }
 
   _show(story) {
-    let viewedItems = JSON.parse(localStorage.getItem('viewer')) || [];
+    let { identifier } = this.props
+    let viewedItems = JSON.parse(localStorage.getItem(`viewer_${identifier}`)) || [];
     let story_id = story.id
     let pending_to_register = viewedItems.indexOf(story_id) == -1
     if(pending_to_register) {
       viewedItems.push(story_id);
-      localStorage.setItem('viewer', JSON.stringify(viewedItems));
+      localStorage.setItem(`viewer_${identifier}`, JSON.stringify(viewedItems));
     }
     this.setState({currentStory: story});
   }
@@ -178,6 +180,7 @@ class ViewerComponent extends React.Component {
 }
 
 ViewerComponent.propTypes = {
+  identifier: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   relations: PropTypes.object.isRequired
 };

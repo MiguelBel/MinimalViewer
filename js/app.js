@@ -9,29 +9,39 @@ class Index extends React.Component {
   }
 
   render() {
-    let { url, relations } = this.props;
+    let { viewers } = this.props;
 
     return (
-      <ViewerComponent
-        url={url}
-        relations={relations}
-      />
+      <div className={'viewers-containers'}>
+        {viewers.map((viewer) =>
+          <ViewerComponent
+            url={viewer.url}
+            relations={viewer.relations}
+            identifier={viewer.identifier}
+            key={viewer.identifier}
+          />
+        )}
+      </div>
     )
   }
 }
 
 Index.propTypes = {
-  url: PropTypes.string.isRequired,
-  relations: PropTypes.object.isRequired
+  viewers: PropTypes.array.isRequired
 };
 
 Index.defaultProps = {
-  url: 'https://polar-ridge-70990.herokuapp.com',
-  relations: {
-    Title: 'title',
-    Subtitle: 'domain',
-    Link: 'url'
-  }
+  viewers: [
+    {
+      identifier: 'hackernews_one',
+      url: 'https://polar-ridge-70990.herokuapp.com',
+      relations: {
+        Title: 'title',
+        Subtitle: 'domain',
+        Link: 'url'
+      }
+    }
+  ]
 }
 
 ReactDOM.render(

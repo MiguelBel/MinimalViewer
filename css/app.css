@@ -2,6 +2,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 .empty-message {
@@ -40,9 +41,9 @@ p {
 }
 
 .counter {
-  bottom: 0px;
-  right: 10px;
   position: absolute;
+  right: 5px;
+  bottom: 0px;
 }
 
 .central-image {
