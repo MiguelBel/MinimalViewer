@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 
 import Downloader from '../Downloader';
+import Storage from '../Storage';
 
 import StoryComponent from './StoryComponent';
 import CounterComponent from './CounterComponent';
@@ -116,7 +117,7 @@ class ViewerComponent extends React.Component {
 
   _store(stories) {
     let { identifier } = this.props
-    const readStories = JSON.parse(localStorage.getItem(`viewer_${identifier}`)) || [];
+    const readStories = Storage.retrieve(identifier);
 
     const filteredStories = stories.filter(story => readStories.indexOf(story.id) == -1);
 
@@ -142,13 +143,8 @@ class ViewerComponent extends React.Component {
 
   _show(story) {
     let { identifier } = this.props
-    let viewedItems = JSON.parse(localStorage.getItem(`viewer_${identifier}`)) || [];
-    let story_id = story.id
-    let pending_to_register = viewedItems.indexOf(story_id) == -1
-    if(pending_to_register) {
-      viewedItems.push(story_id);
-      localStorage.setItem(`viewer_${identifier}`, JSON.stringify(viewedItems));
-    }
+
+    Storage.store(identifier, story.id);
     this.setState({currentStory: story});
   }
 
