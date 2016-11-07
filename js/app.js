@@ -36,6 +36,7 @@ Index.defaultProps = {
       identifier: 'hackernews_one',
       url: 'https://polar-ridge-70990.herokuapp.com',
       relations: {
+        ElementKey: 'id',
         Title: 'title',
         Subtitle: 'domain',
         Link: 'url'

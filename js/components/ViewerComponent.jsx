@@ -116,10 +116,10 @@ class ViewerComponent extends React.Component {
   }
 
   _store(stories) {
-    let { identifier } = this.props
+    let { identifier, relations } = this.props
     const readStories = Storage.retrieve(identifier);
 
-    const filteredStories = stories.filter(story => readStories.indexOf(story.id) == -1);
+    const filteredStories = stories.filter(story => readStories.indexOf(story[relations.ElementKey]) == -1);
 
     const mappedStories = filteredStories.map(story => {
       var matches = story.url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
@@ -142,9 +142,9 @@ class ViewerComponent extends React.Component {
   }
 
   _show(story) {
-    let { identifier } = this.props
+    let { identifier, relations } = this.props
 
-    Storage.store(identifier, story.id);
+    Storage.store(identifier, story[relations.ElementKey]);
     this.setState({currentStory: story});
   }
 
