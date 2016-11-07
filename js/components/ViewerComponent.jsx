@@ -15,17 +15,14 @@ class ViewerComponent extends React.Component {
   }
 
   componentWillMount() {
-    // Fetch data
     let { url, relations } = this.props;
-    // Show loader first
+
     this.setState({ loading: true, empty: false, relations: relations });
-    // Load stories
+
     Downloader.create(url, (stories) => {
-      // and then queue / show stories
       this._store(stories);
     });
 
-    // Set key handlers
     window.onkeydown = (e) => {
       const leftArrowCode = '37'
       const upArrowCode = '38'
@@ -118,12 +115,10 @@ class ViewerComponent extends React.Component {
   }
 
   _store(stories) {
-    // Filter out already read stories
     const readStories = JSON.parse(localStorage.getItem('viewer')) || [];
 
     const filteredStories = stories.filter(story => readStories.indexOf(story.id) == -1);
 
-    // Map so we have the proper URLs + domains
     const mappedStories = filteredStories.map(story => {
       var matches = story.url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
       var domain = matches && matches[1];
@@ -132,7 +127,6 @@ class ViewerComponent extends React.Component {
       });
     });
 
-    // Then add them to the queue
     this.setState({
       storyQueue: mappedStories,
       loading: false,
@@ -167,9 +161,9 @@ class ViewerComponent extends React.Component {
   }
 
   _next() {
-      if (this.state.currentStoryIndex < (this.state.storyQueue.length - 1)) {
-        this._setByIndex(this.state.currentStoryIndex + 1);
-      }
+    if (this.state.currentStoryIndex < (this.state.storyQueue.length - 1)) {
+      this._setByIndex(this.state.currentStoryIndex + 1);
+    }
   }
 
   _prev() {
@@ -181,20 +175,11 @@ class ViewerComponent extends React.Component {
   _open(url) {
     window.open(url);
   }
-
 }
 
 ViewerComponent.propTypes = {
-  url: PropTypes.string.isRequired
-};
-
-ViewerComponent.defaultProps = {
-  url: 'https://polar-ridge-70990.herokuapp.com',
-  relations: {
-    Title: 'title',
-    Subtitle: 'domain',
-    Link: 'url'
-  }
+  url: PropTypes.string.isRequired,
+  relations: PropTypes.object.isRequired
 };
 
 export default ViewerComponent;
