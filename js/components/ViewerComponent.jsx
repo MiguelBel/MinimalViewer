@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 
 import Downloader from '../Downloader';
 import Storage from '../Storage';
+import Keyboard from '../Keyboard';
 
 import StoryComponent from './StoryComponent';
 import CounterComponent from './CounterComponent';
@@ -15,7 +16,7 @@ class ViewerComponent extends React.Component {
   }
 
   componentWillMount() {
-    let { url } = this.props;
+    let { url, currentViewer } = this.props;
 
     this.setState({ loading: true, empty: false });
 
@@ -23,64 +24,7 @@ class ViewerComponent extends React.Component {
       this._store(stories);
     });
 
-    window.onkeydown = (e) => {
-      const leftArrowCode = '37'
-      const upArrowCode = '38'
-      const rightArrowCode = '39'
-
-      if(e.keyCode == leftArrowCode){
-        this._prev()
-      }
-
-      if(e.keyCode == upArrowCode){
-        this._open(this.state.currentStory.url);
-      }
-
-      if(e.keyCode == rightArrowCode){
-        this._next()
-      }
-    }
-
-    window.addEventListener('touchstart', this.handleTouchStart.bind(this), false);
-    window.addEventListener('touchmove', this.handleTouchMove.bind(this), false);
-    window.addEventListener('touchend', this.handleTouchEnd.bind(this), false);
-  }
-
-  handleTouchStart(e) {
-    this.touch = {
-      start: {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY
-      },
-      current: {}
-    }
-  }
-
-  handleTouchMove(e) {
-    const story = document.querySelector('#story-link')
-    const xDiff = e.touches[0].clientX - this.touch.start.x
-
-    this.touch.current = {
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY
-    }
-
-    story.style.transform = `translateX(${xDiff}px)`
-  }
-
-  handleTouchEnd() {
-    if (!this.touch.current.x) {
-      return this._open(this.state.currentStory.url);
-    }
-
-    const story = document.querySelector('#story-link')
-    story.style.transform = ''
-
-    if (this.touch.current.x < this.touch.start.x) {
-      this._next()
-    } else {
-      this._prev()
-    }
+    Keyboard.define(this);
   }
 
   render() {
@@ -145,6 +89,7 @@ class ViewerComponent extends React.Component {
     let { identifier, relations } = this.props
 
     Storage.store(identifier, story[relations.ElementKey]);
+
     this.setState({currentStory: story});
   }
 
@@ -158,16 +103,24 @@ class ViewerComponent extends React.Component {
     this._show(story);
   }
 
-  _next() {
-    if (this.state.currentStoryIndex < (this.state.storyQueue.length - 1)) {
+  next() {
+    let existsNextStory = this.state.currentStoryIndex < (this.state.storyQueue.length - 1);
+
+    if (existsNextStory) {
       this._setByIndex(this.state.currentStoryIndex + 1);
     }
   }
 
-  _prev() {
-    if (this.state.currentStoryIndex > 0) {
+  prev() {
+    let existsPreviousStory = this.state.currentStoryIndex > 0;
+
+    if (existsPreviousStory) {
       this._setByIndex(this.state.currentStoryIndex - 1);
     }
+  }
+
+  open_current() {
+    this._open(this.state.currentStory.url);
   }
 
   _open(url) {
@@ -178,7 +131,8 @@ class ViewerComponent extends React.Component {
 ViewerComponent.propTypes = {
   identifier: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  relations: PropTypes.object.isRequired
+  relations: PropTypes.object.isRequired,
+  currentViewer: PropTypes.string.isRequired
 };
 
 export default ViewerComponent;

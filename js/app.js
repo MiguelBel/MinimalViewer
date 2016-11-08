@@ -6,10 +6,20 @@ import ViewerComponent from 'components/ViewerComponent';
 class Index extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {}
+  }
+
+  componentWillMount() {
+    let { viewers } = this.props;
+    let first_viewer = viewers[0];
+    let first_viewer_identifier = first_viewer.identifier;
+
+    this.setState({ currentViewer: first_viewer_identifier  });
   }
 
   render() {
     let { viewers } = this.props;
+    let { currentViewer } = this.state;
 
     return (
       <div className={'viewers-containers'}>
@@ -19,6 +29,7 @@ class Index extends React.Component {
             relations={viewer.relations}
             identifier={viewer.identifier}
             key={viewer.identifier}
+            currentViewer={currentViewer}
           />
         )}
       </div>
