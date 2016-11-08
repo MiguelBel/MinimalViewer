@@ -1,22 +1,30 @@
 const Keyboard = {
-  define(component) {
-    this.component = component;
-
+  define() {
     window.onkeydown = (e) => {
+      const channel = postal.channel();
       const leftArrowCode = '37'
       const upArrowCode = '38'
       const rightArrowCode = '39'
 
       if(e.keyCode == leftArrowCode){
-        component.prev()
+        channel.publish(
+          'action_triggered',
+          { name: 'prev' }
+        );
       }
 
       if(e.keyCode == upArrowCode){
-        component.open_current()
+        channel.publish(
+          'action_triggered',
+          { name: 'next_viewer' }
+        );
       }
 
       if(e.keyCode == rightArrowCode){
-        component.next()
+        channel.publish(
+          'action_triggered',
+          { name: 'next' }
+        );
       }
     }
 
@@ -48,17 +56,28 @@ const Keyboard = {
   },
 
   _handleTouchEnd() {
+    const channel = postal.channel();
+
     if (!this.touch.current.x) {
-      return this.component.open_current();
+      return channel.publish(
+        'action_triggered',
+        { name: 'open' }
+      );
     }
 
     const story = document.querySelector('#story-link')
     story.style.transform = ''
 
     if (this.touch.current.x < this.touch.start.x) {
-      this.component.next()
+      channel.publish(
+        'action_triggered',
+        { name: 'next' }
+      );
     } else {
-      this.component.prev()
+      channel.publish(
+        'action_triggered',
+        { name: 'prev' }
+      );
     }
   }
 }

@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 
 import Downloader from '../Downloader';
 import Storage from '../Storage';
-import Keyboard from '../Keyboard';
 
 import StoryComponent from './StoryComponent';
 import CounterComponent from './CounterComponent';
@@ -16,15 +15,34 @@ class ViewerComponent extends React.Component {
   }
 
   componentWillMount() {
-    let { url, currentViewer } = this.props;
+    let { url } = this.props;
 
     this.setState({ loading: true, empty: false });
 
     Downloader.create(url, (stories) => {
       this._store(stories);
     });
+  }
 
-    Keyboard.define(this);
+  componentDidMount() {
+    let channel = postal.channel();
+    let { currentViewer, identifier } = this.props;
+
+    channel.subscribe('action_triggered', function(data) {
+      if(currentViewer.identifier == identifier) {
+        if(data.name == 'next') {
+          this._next();
+        }
+
+        if(data.name == 'prev') {
+          this._prev();
+        }
+
+        if(data.name == 'open') {
+          this._open_current();
+        }
+      }
+    }.bind(this));
   }
 
   render() {
@@ -103,7 +121,7 @@ class ViewerComponent extends React.Component {
     this._show(story);
   }
 
-  next() {
+  _next() {
     let existsNextStory = this.state.currentStoryIndex < (this.state.storyQueue.length - 1);
 
     if (existsNextStory) {
@@ -111,7 +129,7 @@ class ViewerComponent extends React.Component {
     }
   }
 
-  prev() {
+  _prev() {
     let existsPreviousStory = this.state.currentStoryIndex > 0;
 
     if (existsPreviousStory) {
@@ -119,7 +137,7 @@ class ViewerComponent extends React.Component {
     }
   }
 
-  open_current() {
+  _open_current() {
     this._open(this.state.currentStory.url);
   }
 
@@ -132,7 +150,7 @@ ViewerComponent.propTypes = {
   identifier: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   relations: PropTypes.object.isRequired,
-  currentViewer: PropTypes.string.isRequired
+  currentViewer: PropTypes.object.isRequired
 };
 
 export default ViewerComponent;

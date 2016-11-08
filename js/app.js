@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
+import Keyboard from './Keyboard';
+
 import ViewerComponent from 'components/ViewerComponent';
 
 class Index extends React.Component {
@@ -12,9 +14,9 @@ class Index extends React.Component {
   componentWillMount() {
     let { viewers } = this.props;
     let first_viewer = viewers[0];
-    let first_viewer_identifier = first_viewer.identifier;
 
-    this.setState({ currentViewer: first_viewer_identifier  });
+    this.setState({ currentViewer: first_viewer });
+    Keyboard.define();
   }
 
   render() {
@@ -29,6 +31,7 @@ class Index extends React.Component {
             relations={viewer.relations}
             identifier={viewer.identifier}
             key={viewer.identifier}
+            viewers={viewers}
             currentViewer={currentViewer}
           />
         )}
