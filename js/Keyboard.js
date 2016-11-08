@@ -1,29 +1,51 @@
 const Keyboard = {
-  define() {
+  define(identifier) {
+    this.identifier = identifier;
+
     window.onkeydown = (e) => {
       const channel = postal.channel();
       const leftArrowCode = '37'
       const upArrowCode = '38'
       const rightArrowCode = '39'
+      const downArrowCode = '40'
 
       if(e.keyCode == leftArrowCode){
         channel.publish(
           'action_triggered',
-          { name: 'prev' }
+          {
+            name: 'prev',
+            element: this.identifier
+          }
         );
       }
 
       if(e.keyCode == upArrowCode){
         channel.publish(
           'action_triggered',
-          { name: 'next_viewer' }
+          {
+            name: 'previous_viewer',
+            element: this.identifier
+          }
         );
       }
 
       if(e.keyCode == rightArrowCode){
         channel.publish(
           'action_triggered',
-          { name: 'next' }
+          {
+            name: 'next',
+            element: this.identifier
+          }
+        );
+      }
+
+      if(e.keyCode == downArrowCode){
+        channel.publish(
+          'action_triggered',
+          {
+            name: 'next_viewer',
+            element: this.identifier
+          }
         );
       }
     }
@@ -61,7 +83,10 @@ const Keyboard = {
     if (!this.touch.current.x) {
       return channel.publish(
         'action_triggered',
-        { name: 'open' }
+        {
+          name: 'open',
+          element: this.identifier
+        }
       );
     }
 
@@ -71,12 +96,18 @@ const Keyboard = {
     if (this.touch.current.x < this.touch.start.x) {
       channel.publish(
         'action_triggered',
-        { name: 'next' }
+        {
+          name: 'next',
+          element: this.identifier
+        }
       );
     } else {
       channel.publish(
         'action_triggered',
-        { name: 'prev' }
+        {
+          name: 'prev',
+          element: this.identifier
+        }
       );
     }
   }

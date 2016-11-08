@@ -26,10 +26,10 @@ class ViewerComponent extends React.Component {
 
   componentDidMount() {
     let channel = postal.channel();
-    let { currentViewer, identifier } = this.props;
+    let { identifier } = this.props;
 
     channel.subscribe('action_triggered', function(data) {
-      if(currentViewer.identifier == identifier) {
+      if(data.element == identifier) {
         if(data.name == 'next') {
           this._next();
         }
@@ -149,8 +149,7 @@ class ViewerComponent extends React.Component {
 ViewerComponent.propTypes = {
   identifier: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  relations: PropTypes.object.isRequired,
-  currentViewer: PropTypes.object.isRequired
+  relations: PropTypes.object.isRequired
 };
 
 export default ViewerComponent;

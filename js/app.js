@@ -14,14 +14,33 @@ class Index extends React.Component {
   componentWillMount() {
     let { viewers } = this.props;
     let first_viewer = viewers[0];
-
     this.setState({ currentViewer: first_viewer });
-    Keyboard.define();
+
+    let channel = postal.channel()
+    channel.subscribe('action_triggered', function(data){
+      if(data.name == 'next_viewer') {
+        let { currentViewer } = this.state;
+        let next_viewer = viewers[viewers.indexOf(currentViewer) + 1];
+        if(next_viewer != undefined) {
+          this.setState({ currentViewer: next_viewer });
+        }
+      }
+
+      if(data.name == 'previous_viewer') {
+        let { currentViewer } = this.state;
+        let previous_viewer = viewers[viewers.indexOf(currentViewer) - 1];
+        if(previous_viewer != undefined) {
+          this.setState({ currentViewer: previous_viewer });
+        }
+      }
+    }.bind(this));
   }
 
   render() {
     let { viewers } = this.props;
     let { currentViewer } = this.state;
+
+    Keyboard.define(currentViewer.identifier);
 
     return (
       <div className={'viewers-containers'}>
@@ -31,8 +50,6 @@ class Index extends React.Component {
             relations={viewer.relations}
             identifier={viewer.identifier}
             key={viewer.identifier}
-            viewers={viewers}
-            currentViewer={currentViewer}
           />
         )}
       </div>
