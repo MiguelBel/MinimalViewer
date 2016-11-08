@@ -10,6 +10,7 @@ const Keyboard = {
       const downArrowCode = '40'
 
       if(e.keyCode == leftArrowCode){
+        e.preventDefault();
         channel.publish(
           'action_triggered',
           {
@@ -20,6 +21,7 @@ const Keyboard = {
       }
 
       if(e.keyCode == upArrowCode){
+        e.preventDefault();
         channel.publish(
           'action_triggered',
           {
@@ -30,6 +32,7 @@ const Keyboard = {
       }
 
       if(e.keyCode == rightArrowCode){
+        e.preventDefault();
         channel.publish(
           'action_triggered',
           {
@@ -40,6 +43,7 @@ const Keyboard = {
       }
 
       if(e.keyCode == downArrowCode){
+        e.preventDefault();
         channel.publish(
           'action_triggered',
           {

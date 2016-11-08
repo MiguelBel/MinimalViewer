@@ -47,7 +47,7 @@ class ViewerComponent extends React.Component {
 
   render() {
     let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
-    let { relations } = this.props
+    let { relations, identifier } = this.props
 
     if (empty) {
       return (
@@ -62,7 +62,7 @@ class ViewerComponent extends React.Component {
     }
 
     return (
-      <div id={'story-container'} className={'full-screen'}>
+      <div id={identifier} className={'full-screen'}>
         <StoryComponent
           Link={currentStory[relations.Link]}
           Subtitle={currentStory[relations.Subtitle]}

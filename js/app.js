@@ -23,6 +23,7 @@ class Index extends React.Component {
         let next_viewer = viewers[viewers.indexOf(currentViewer) + 1];
         if(next_viewer != undefined) {
           this.setState({ currentViewer: next_viewer });
+          document.getElementById(next_viewer.identifier).scrollIntoView(true);
         }
       }
 
@@ -31,6 +32,7 @@ class Index extends React.Component {
         let previous_viewer = viewers[viewers.indexOf(currentViewer) - 1];
         if(previous_viewer != undefined) {
           this.setState({ currentViewer: previous_viewer });
+          document.getElementById(previous_viewer.identifier).scrollIntoView(true);
         }
       }
     }.bind(this));
