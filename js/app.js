@@ -44,6 +44,7 @@ class Index extends React.Component {
     let { currentViewer } = this.state;
 
     Keyboard.define(currentViewer.identifier);
+    this._notify_viewer_loaded(currentViewer);
 
     return (
       <div className={'viewers-containers'}>
@@ -55,10 +56,23 @@ class Index extends React.Component {
             key={viewer.identifier}
             title={viewer.title}
             color={viewer.color}
+            defaultViewerIdentifier={currentViewer.identifier}
           />
         )}
       </div>
     )
+  }
+
+  _notify_viewer_loaded(viewer) {
+    let channel = postal.channel();
+
+    channel.publish(
+      'viewer_loaded',
+      {
+        element: viewer.identifier
+      }
+    );
+
   }
 }
 

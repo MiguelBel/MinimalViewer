@@ -44,6 +44,12 @@ class ViewerComponent extends React.Component {
         }
       }
     }.bind(this));
+
+    channel.subscribe('viewer_loaded', function(data) {
+      if (data.element == identifier) {
+        this._mark_first_as_viewed();
+      }
+    }.bind(this));
   }
 
   render() {
@@ -83,9 +89,8 @@ class ViewerComponent extends React.Component {
   }
 
   _store(stories) {
-    let { identifier, relations } = this.props
+    let { defaultViewerIdentifier, identifier, relations } = this.props
     const readStories = Storage.retrieve(identifier);
-
     const filteredStories = stories.filter(story => readStories.indexOf(story[relations.ElementKey]) == -1);
 
     const mappedStories = filteredStories.map(story => {
@@ -105,25 +110,36 @@ class ViewerComponent extends React.Component {
 
     if (mappedStories.length > 0) {
       this._show(mappedStories[0]);
+      if (defaultViewerIdentifier == identifier) {
+        this._mark_first_as_viewed();
+      }
     }
-  }
-
-  _show(story) {
-    let { identifier, relations } = this.props
-
-    Storage.store(identifier, story[relations.ElementKey]);
-
-    this.setState({currentStory: story});
   }
 
   _setByIndex(index) {
     let story = this.state.storyQueue[index];
 
-    this.setState({
-      currentStoryIndex: index,
-    });
+    this.setState({ currentStoryIndex: index });
 
     this._show(story);
+    this._mark_as_viewed(story);
+  }
+
+  _show(story) {
+    this.setState({ currentStory: story });
+  }
+
+  _mark_as_viewed(story) {
+    let { identifier, relations } = this.props
+
+    Storage.store(identifier, story[relations.ElementKey]);
+  }
+
+  _mark_first_as_viewed() {
+    let { storyQueue } = this.state
+    let first_story = storyQueue[0];
+
+    this._mark_as_viewed(first_story);
   }
 
   _next() {
