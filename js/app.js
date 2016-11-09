@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 import Keyboard from './Keyboard';
+import Config from './Config';
 
 import ViewerComponent from 'components/ViewerComponent';
 
@@ -61,26 +62,11 @@ class Index extends React.Component {
   }
 }
 
+Index.defaultProps = Config
+
 Index.propTypes = {
   viewers: PropTypes.array.isRequired
 };
-
-Index.defaultProps = {
-  viewers: [
-    {
-      title: 'HackerNews',
-      identifier: 'hackernews_one',
-      url: 'https://polar-ridge-70990.herokuapp.com',
-      relations: {
-        ElementKey: 'id',
-        Title: 'title',
-        Subtitle: 'domain',
-        Link: 'url'
-      },
-      color: 'black'
-    }
-  ]
-}
 
 ReactDOM.render(
   <Index />,
