@@ -53,6 +53,7 @@ class Index extends React.Component {
             identifier={viewer.identifier}
             key={viewer.identifier}
             title={viewer.title}
+            color={viewer.color}
           />
         )}
       </div>
@@ -75,7 +76,8 @@ Index.defaultProps = {
         Title: 'title',
         Subtitle: 'domain',
         Link: 'url'
-      }
+      },
+      color: 'black'
     }
   ]
 }

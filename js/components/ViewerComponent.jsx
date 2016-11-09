@@ -48,7 +48,7 @@ class ViewerComponent extends React.Component {
 
   render() {
     let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
-    let { relations, identifier, title } = this.props
+    let { relations, identifier, title, color } = this.props
 
     if (empty) {
       return (
@@ -63,7 +63,7 @@ class ViewerComponent extends React.Component {
     }
 
     return (
-      <div id={identifier} className={'full-screen'}>
+      <div id={identifier} style={{color: color}}  className={'full-screen'}>
         <TitleComponent
           Text={title}
         />
@@ -155,7 +155,8 @@ ViewerComponent.propTypes = {
   identifier: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   relations: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired
 };
 
 export default ViewerComponent;
