@@ -47,7 +47,18 @@ p {
 }
 
 .central-image {
-  position:absolute;
+  position: absolute;
   top: 40%;
   left: 45%;
+}
+
+.title {
+  position: absolute;
+  top: 0px;
+  left: 10px;
+}
+
+.title h1 {
+  font-family: 'Libre Baskerville', serif;
+  color: black;
 }

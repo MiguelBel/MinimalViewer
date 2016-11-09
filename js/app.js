@@ -52,6 +52,7 @@ class Index extends React.Component {
             relations={viewer.relations}
             identifier={viewer.identifier}
             key={viewer.identifier}
+            title={viewer.title}
           />
         )}
       </div>
@@ -66,6 +67,7 @@ Index.propTypes = {
 Index.defaultProps = {
   viewers: [
     {
+      title: 'HackerNews',
       identifier: 'hackernews_one',
       url: 'https://polar-ridge-70990.herokuapp.com',
       relations: {

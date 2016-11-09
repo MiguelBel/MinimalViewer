@@ -5,6 +5,7 @@ import Storage from '../Storage';
 
 import StoryComponent from './StoryComponent';
 import CounterComponent from './CounterComponent';
+import TitleComponent from './TitleComponent';
 import LoadingComponent from './LoadingComponent';
 import EmptyStoriesComponent from './EmptyStoriesComponent';
 
@@ -47,7 +48,7 @@ class ViewerComponent extends React.Component {
 
   render() {
     let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
-    let { relations, identifier } = this.props
+    let { relations, identifier, title } = this.props
 
     if (empty) {
       return (
@@ -63,6 +64,10 @@ class ViewerComponent extends React.Component {
 
     return (
       <div id={identifier} className={'full-screen'}>
+        <TitleComponent
+          Text={title}
+        />
+
         <StoryComponent
           Link={currentStory[relations.Link]}
           Subtitle={currentStory[relations.Subtitle]}
@@ -149,7 +154,8 @@ class ViewerComponent extends React.Component {
 ViewerComponent.propTypes = {
   identifier: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  relations: PropTypes.object.isRequired
+  relations: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired
 };
 
 export default ViewerComponent;
