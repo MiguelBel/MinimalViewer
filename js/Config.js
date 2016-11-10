@@ -2,7 +2,7 @@ const Config = {
   viewers: [
     {
       title: 'HackerNews',
-      identifier: 'hackernews_one',
+      identifier: 'hackernews',
       url: 'https://polar-ridge-70990.herokuapp.com',
       relations: {
         ElementKey: 'id',

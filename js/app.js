@@ -5,6 +5,7 @@ import Keyboard from './Keyboard';
 import Config from './Config';
 
 import ViewerComponent from 'components/ViewerComponent';
+const postal = require("postal");
 
 class Index extends React.Component {
   constructor(props) {
@@ -23,8 +24,11 @@ class Index extends React.Component {
         let { currentViewer } = this.state;
         let next_viewer = viewers[viewers.indexOf(currentViewer) + 1];
         if(next_viewer != undefined) {
+          let current_element = document.getElementById(currentViewer.identifier);
+          current_element.classList.remove("visible");
           this.setState({ currentViewer: next_viewer });
-          document.getElementById(next_viewer.identifier).scrollIntoView(true);
+          let element = document.getElementById(next_viewer.identifier);
+          element.classList.add("visible");
         }
       }
 
@@ -32,8 +36,11 @@ class Index extends React.Component {
         let { currentViewer } = this.state;
         let previous_viewer = viewers[viewers.indexOf(currentViewer) - 1];
         if(previous_viewer != undefined) {
+          let current_element = document.getElementById(currentViewer.identifier);
+          current_element.classList.remove("visible");
           this.setState({ currentViewer: previous_viewer });
-          document.getElementById(previous_viewer.identifier).scrollIntoView(true);
+          let element = document.getElementById(previous_viewer.identifier);
+          element.classList.add("visible");
         }
       }
     }.bind(this));

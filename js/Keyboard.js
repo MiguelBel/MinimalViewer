@@ -1,3 +1,5 @@
+const postal = require("postal");
+
 const Keyboard = {
   define(identifier) {
     this.identifier = identifier;
@@ -8,6 +10,8 @@ const Keyboard = {
       const upArrowCode = '38'
       const rightArrowCode = '39'
       const downArrowCode = '40'
+      const enterCode = '13'
+      const spaceBarCode = '32'
 
       if(e.keyCode == leftArrowCode){
         e.preventDefault();
@@ -37,6 +41,17 @@ const Keyboard = {
           'action_triggered',
           {
             name: 'next',
+            element: this.identifier
+          }
+        );
+      }
+
+      if(e.keyCode == enterCode || e.keyCode == spaceBarCode){
+        e.preventDefault();
+        channel.publish(
+          'action_triggered',
+          {
+            name: 'open',
             element: this.identifier
           }
         );

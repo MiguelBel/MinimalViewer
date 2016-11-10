@@ -9,6 +9,8 @@ import TitleComponent from './TitleComponent';
 import LoadingComponent from './LoadingComponent';
 import EmptyStoriesComponent from './EmptyStoriesComponent';
 
+const postal = require("postal");
+
 class ViewerComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -54,22 +56,34 @@ class ViewerComponent extends React.Component {
 
   render() {
     let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
-    let { relations, identifier, title, color } = this.props
+    let { relations, identifier, title, color, defaultViewerIdentifier } = this.props
 
     if (empty) {
       return (
-        <EmptyStoriesComponent />
+        <div id={identifier} style={{color: color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
+          <TitleComponent
+            Text={title}
+          />
+
+          <EmptyStoriesComponent />
+        </div>
       )
     }
 
     if (loading || currentStory === undefined) {
       return (
-        <LoadingComponent />
+        <div id={identifier} style={{color: color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
+          <TitleComponent
+            Text={title}
+          />
+
+          <LoadingComponent />
+        </div>
       )
     }
 
     return (
-      <div id={identifier} style={{color: color}}  className={'full-screen'}>
+      <div id={identifier} style={{color: color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
         <TitleComponent
           Text={title}
         />
@@ -93,23 +107,15 @@ class ViewerComponent extends React.Component {
     const readStories = Storage.retrieve(identifier);
     const filteredStories = stories.filter(story => readStories.indexOf(story[relations.ElementKey]) == -1);
 
-    const mappedStories = filteredStories.map(story => {
-      var matches = story.url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
-      var domain = matches && matches[1];
-      return Object.assign({}, story, {
-        domain: domain
-      });
-    });
-
     this.setState({
-      storyQueue: mappedStories,
+      storyQueue: filteredStories,
       loading: false,
-      empty: mappedStories.length == 0,
+      empty: filteredStories.length == 0,
       currentStoryIndex: 0
     });
 
-    if (mappedStories.length > 0) {
-      this._show(mappedStories[0]);
+    if (filteredStories.length > 0) {
+      this._show(filteredStories[0]);
       if (defaultViewerIdentifier == identifier) {
         this._mark_first_as_viewed();
       }
@@ -132,7 +138,9 @@ class ViewerComponent extends React.Component {
   _mark_as_viewed(story) {
     let { identifier, relations } = this.props
 
-    Storage.store(identifier, story[relations.ElementKey]);
+    if (story) {
+      Storage.store(identifier, story[relations.ElementKey]);
+    }
   }
 
   _mark_first_as_viewed() {
