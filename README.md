@@ -10,6 +10,17 @@ So I developed [this](http://hacker-news-viewer.miguel.im). After I realized I w
 
 And that is how we got here.
 
+### Features
+
+You can navigate through the items with:
+
+- Left arrow key: Go to previous item
+- Right arrow key: Go to next item
+- Up arrow key: Go to previous viewer
+- Down arrow key: Go to next viewer
+- Enter: Open the current item
+- Space bar: Open the current item
+
 ### Usage
 
 You can see an example of HackerNewsViewer [here](https://github.com/MiguelBel/HackerNewsViewer)
@@ -39,7 +50,7 @@ Is a JavaScript component used as:
 There is two arguments:
 
 - Selector for the root div
-- The viewers. It should be an array of hashes.
+- The viewers. It should be an array of hashes. One or more viewers can be set
 
 A viewer is composed of:
 
@@ -80,6 +91,7 @@ The app is intended to be served with statics. If you want to serve the web thro
 
 - index.html
 - css/
+- img/
 - minimal_viewer.js
 
 For building the dist directory you can execute:

@@ -169,8 +169,8 @@ var MinimalViewer =
 	};
 
 	module.exports = {
-	  initialize: function initialize(id, configuration) {
-	    _reactDom2.default.render(_react2.default.createElement(Index, { viewers: configuration }), document.getElementById(id));
+	  initialize: function initialize(selector, configuration) {
+	    _reactDom2.default.render(_react2.default.createElement(Index, { viewers: configuration }), document.querySelector(selector));
 	  }
 	};
 
