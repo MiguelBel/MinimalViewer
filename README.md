@@ -99,3 +99,9 @@ For building the dist directory you can execute:
 ```
 $ docker-compose exec minimal_viewer npm run build
 ```
+
+### Contributors
+
+1. Add your feature and do not forget the tests
+2. Build the project to have it updated in dist/
+3. Pull request
