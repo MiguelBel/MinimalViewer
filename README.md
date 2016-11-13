@@ -59,10 +59,11 @@ A viewer is composed of:
 - **url:** The url of the api. It is the url from the component will download the data.
 - **relations:** The mapping of the JSON downloaded (the JSON must be a plain array).
   - It should carry:
-    - __Title:__ Title of the story
-    - __Subtitle:__ Subtitle of the story
-    - __Link:__ Link of the story
-    - __ElementKey:__ The element in which basis you do not want to show again. Can be one of the prior mentioned or other different
+    - __Title:__ Title of the story.
+    - __Subtitle:__ Subtitle of the story.
+    - __Link:__ Link of the story.
+    - __ElementKey:__ The element in which basis you do     not want to show again. Can be one of the prior mentioned or other different.
+- **color:** The color of the viewer.
 
 Under the /dist folder you can see a simple example of how to use the component to build a minimal viewer.
 
