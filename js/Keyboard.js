@@ -4,7 +4,7 @@ const Keyboard = {
   define(identifier) {
     this.identifier = identifier;
 
-    window.onkeydown = (e) => {
+    document.onkeydown = (e) => {
       const channel = postal.channel();
       const leftArrowCode = '37'
       const upArrowCode = '38'

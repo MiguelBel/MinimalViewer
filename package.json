@@ -4,7 +4,7 @@
   "description": "Simple HackerNews viewer",
   "main": "app.js",
   "scripts": {
-    "start": "webpack --watch"
+    "build": "webpack -g ; cp index.html dist/index.html ; cp -r css/ dist/css"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,9 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "webpack": "^1.13.3",
-    "postal": "^2.0.4"
+    "webpack-dev-middleware": "^1.8.4",
+    "webpack-hot-middleware": "^2.13.2",
+    "postal": "^2.0.4",
+    "express": "^4.14.0"
   }
 }

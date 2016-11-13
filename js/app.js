@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 import Keyboard from './Keyboard';
-import Config from './Config';
 
 import ViewerComponent from 'components/ViewerComponent';
 const postal = require("postal");
@@ -83,13 +82,15 @@ class Index extends React.Component {
   }
 }
 
-Index.defaultProps = Config
-
 Index.propTypes = {
   viewers: PropTypes.array.isRequired
 };
 
-ReactDOM.render(
-  <Index />,
-  document.getElementById('root')
-);
+module.exports = {
+  initialize: function (selector, configuration) {
+    ReactDOM.render(
+      <Index viewers={configuration} />,
+      document.querySelector(selector)
+    );
+  }
+};

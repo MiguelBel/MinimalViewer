@@ -1,7 +1,7 @@
 <html>
 <head>
 
-  <title>Minimal Viewer</title>
+  <title>Minimal Viewer Test</title>
 
   <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
   <link href="css/app.css" rel="stylesheet" type="text/css">
@@ -9,7 +9,7 @@
 <body>
   <div id="root"></div>
 
-  <script type="text/javascript" src="minimal_viewer.js"></script>
+  <script type="text/javascript" src="../minimal_viewer.js"></script>
   <script type="text/javascript">
     MinimalViewer.initialize(
       '#root',
@@ -17,7 +17,7 @@
         {
           title: 'HackerNews',
           identifier: 'hackernews',
-          url: 'http://localhost:9400',
+          url: 'http://api_stub:9400',
           relations: {
             ElementKey: 'id',
             Title: 'title',

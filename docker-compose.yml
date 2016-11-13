@@ -1,0 +1,41 @@
+chromedriver:
+  image: selenium/standalone-chrome
+  links:
+    - minimal_viewer
+    - api_stub
+  ports:
+    - "4444:4444"
+
+minimal_viewer:
+  build: .
+  environment:
+    - PORT=9300
+    - URL=http://localhost:9400
+  ports:
+    - 9300:9300
+  links:
+    - api_stub
+  volumes:
+    - '.:/minimal_viewer'
+    - '/minimal_viewer/node_modules'
+  command: node server.js
+
+api_stub:
+  build: ./test/stubs/api
+  environment:
+    - PORT=9400
+  ports:
+    - 9400:9400
+  volumes:
+    - './test/stubs/api:/api'
+    - '/api/node_modules'
+  command: node server.js
+
+functional_test_suite:
+  build: ./test
+  links:
+    - chromedriver
+  volumes:
+    - './test/:/functional_test_suite'
+    - '/functional_test_suite/node_modules'
+  command: sleep infinity
