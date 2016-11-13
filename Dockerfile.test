@@ -1,5 +1,0 @@
-FROM node:7.1.0
-RUN mkdir -p /minimal_viewer_test
-COPY package.json /minimal_viewer_test/package.json
-WORKDIR /minimal_viewer_test
-RUN npm install
