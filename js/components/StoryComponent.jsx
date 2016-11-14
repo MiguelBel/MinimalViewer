@@ -6,7 +6,7 @@ class StoryComponent extends React.Component {
 
     return (
       <div id={'story-link'} className={'story-link'}>
-        <a href={ Link } id={'story-url'} className={'story-link'}>{ Title }</a>
+        <a href={ Link } id={'story-url'} className={'story-link'} target={'_blank'}>{ Title }</a>
         <p id={'story-domain'}>{ Subtitle }</p>
       </div>
     )

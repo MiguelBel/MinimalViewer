@@ -42,6 +42,16 @@ module.exports = {
     App.enter(browser);
     var total = 28;
     App.expect_counter_to_have(1, total, browser);
+  },
+
+  'Title by configuration': function (browser) {
+    App.enter(browser);
+    App.expect_to_have_title('TestViewer', browser);
+  },
+
+  'Color by configuration': function(browser) {
+    App.enter(browser);
+    App.expect_to_have_color('black', browser);
   }
 };
 
@@ -62,11 +72,24 @@ App = {
     browser.keys(browser.Keys['LEFT_ARROW'])
   },
 
-  expect_to_have_item(number, browser) {
-    browser.assert.containsText('#story-url', 'Title ' + number)
+  expect_to_have_item: function(number, browser) {
+    title = 'Title ' + number;
+    url = 'http://www.' + number + '.com/';
+    browser.assert.containsText('#story-url', title);
+    browser.expect.element('#story-url').to.have.attribute('href').which.equals(url);
+    browser.expect.element('#story-url').to.have.attribute('target').which.equals('_blank');
   },
 
-  expect_counter_to_have(number, total, browser) {
+  expect_counter_to_have: function(number, total, browser) {
     browser.assert.containsText('#stories-counter', number + '/' + total)
+  },
+
+  expect_to_have_title: function(title, browser) {
+    browser.assert.containsText('#title', title);
+  },
+
+  expect_to_have_color: function(color, browser) {
+    style = 'color: ' + color + ';'
+    browser.expect.element('#test_viewer').to.have.attribute('style').which.equals(style);
   }
 }
