@@ -2,3 +2,4 @@ test/screenshots/
 node_modules
 npm-debug.log
 *.backup
+minimal_viewer.js
