@@ -1,7 +1,7 @@
 var path = require('path');
 
 module.exports ={
-  entry: './js/app.js',
+  entry: ['whatwg-fetch', './js/app.js'],
   output: {
     filename: 'minimal_viewer.js',
     path: '/minimal_viewer/dist/',

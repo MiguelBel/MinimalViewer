@@ -27,6 +27,7 @@
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.2",
     "postal": "^2.0.4",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "whatwg-fetch": "^2.0.0"
   }
 }
