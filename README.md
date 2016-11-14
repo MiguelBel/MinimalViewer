@@ -29,7 +29,7 @@ Is a JavaScript component used as:
 
 ```
   MinimalViewer.initialize(
-    'root',
+    '#root',
     [
       {
         title: 'HackerNews',
