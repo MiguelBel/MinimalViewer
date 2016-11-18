@@ -3,7 +3,8 @@ import React, { PropTypes } from 'react';
 import Downloader from '../Downloader';
 import Storage from '../Storage';
 
-import StoryComponent from './StoryComponent';
+import ItemTemplate from '../ItemTemplate';
+
 import CounterComponent from './CounterComponent';
 import TitleComponent from './TitleComponent';
 import LoadingComponent from './LoadingComponent';
@@ -56,7 +57,7 @@ class ViewerComponent extends React.Component {
 
   render() {
     let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
-    let { relations, identifier, title, color, defaultViewerIdentifier } = this.props
+    let { relations, identifier, title, color, type, defaultViewerIdentifier } = this.props
 
     if (empty) {
       return (
@@ -88,11 +89,9 @@ class ViewerComponent extends React.Component {
           Text={title}
         />
 
-        <StoryComponent
-          Link={currentStory[relations.Link]}
-          Subtitle={currentStory[relations.Subtitle]}
-          Title={currentStory[relations.Title]}
-        />
+        {
+          ItemTemplate.forType(type, relations, currentStory)
+        }
 
         <CounterComponent
           Current={String(currentStoryIndex + 1)}
@@ -180,7 +179,8 @@ ViewerComponent.propTypes = {
   url: PropTypes.string.isRequired,
   relations: PropTypes.object.isRequired,
   title: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired
+  color: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired
 };
 
 export default ViewerComponent;

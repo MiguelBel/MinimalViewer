@@ -23,6 +23,10 @@ app.get('/test', function(req, res) {
   res.sendFile(path.join(__dirname + '/test/index.test.html'));
 });
 
+app.get('/test_story', function(req, res) {
+  res.sendFile(path.join(__dirname + '/test/index.story.test.html'));
+});
+
 app.listen(process.env.PORT, function () {
   console.log('[APP] Listening in port ' + process.env.PORT);
 })
