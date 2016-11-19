@@ -57,11 +57,11 @@ class ViewerComponent extends React.Component {
 
   render() {
     let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
-    let { relations, identifier, title, color, type, defaultViewerIdentifier } = this.props
+    let { relations, identifier, title, primary_color, secondary_color, type, defaultViewerIdentifier } = this.props
 
     if (empty) {
       return (
-        <div id={identifier} style={{color: color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
+        <div id={identifier} style={{color: primary_color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
           <TitleComponent
             Text={title}
           />
@@ -73,27 +73,28 @@ class ViewerComponent extends React.Component {
 
     if (loading || currentStory === undefined) {
       return (
-        <div id={identifier} style={{color: color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
+        <div id={identifier} style={{color: primary_color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
           <TitleComponent
             Text={title}
           />
 
-          <LoadingComponent />
+          <LoadingComponent SecondaryColor={secondary_color}/>
         </div>
       )
     }
 
     return (
-      <div id={identifier} style={{color: color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
+      <div id={identifier} style={{color: primary_color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
         <TitleComponent
           Text={title}
         />
 
-        { ItemTemplate.forType(type, relations, currentStory) }
+        { ItemTemplate.forType(type, relations, currentStory, secondary_color) }
 
         <CounterComponent
           Current={String(currentStoryIndex + 1)}
           Total={String(storyQueue.length)}
+          SecondaryColor={secondary_color}
         />
       </div>
     )
@@ -177,7 +178,8 @@ ViewerComponent.propTypes = {
   url: PropTypes.string.isRequired,
   relations: PropTypes.object.isRequired,
   title: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired,
+  primary_color: PropTypes.string.isRequired,
+  secondary_color: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired
 };
 

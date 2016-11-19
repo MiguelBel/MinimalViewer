@@ -61,7 +61,8 @@ class Index extends React.Component {
             identifier={viewer.identifier}
             key={viewer.identifier}
             title={viewer.title}
-            color={viewer.color}
+            primary_color={viewer.primary_color}
+            secondary_color={viewer.secondary_color}
             type={viewer.type}
             defaultViewerIdentifier={currentViewer.identifier}
           />
