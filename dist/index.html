@@ -4,12 +4,12 @@
   <title>Minimal Viewer</title>
 
   <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
-  <link href="css/app.css" rel="stylesheet" type="text/css">
+  <link href="minimal_viewer-0.1.css" rel="stylesheet" type="text/css">
 </head>
 <body>
   <div id="root"></div>
 
-  <script type="text/javascript" src="minimal_viewer.js"></script>
+  <script type="text/javascript" src="minimal_viewer-0.1.js"></script>
   <script type="text/javascript">
     MinimalViewer.initialize(
       '#root',
@@ -24,7 +24,9 @@
             Subtitle: 'domain',
             Link: 'url'
           },
-          color: 'black'
+          primary_color: 'black',
+          secondary_color: 'orange',
+          type: 'headline'
         }
       ]
     )

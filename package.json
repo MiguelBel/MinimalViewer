@@ -4,7 +4,7 @@
   "description": "Simple HackerNews viewer",
   "main": "app.js",
   "scripts": {
-    "build": "webpack -g ; cp index.html dist/index.html ; cp -r css/ dist/css ; cp -r img/ dist/img"
+    "build": "webpack -g ; cp index.html dist/index.html ; cp css/app.css dist/minimal_viewer.css "
   },
   "repository": {
     "type": "git",
