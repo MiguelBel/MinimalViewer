@@ -5,9 +5,11 @@ class HeadlineItemComponent extends React.Component {
     let { Link, Title, Subtitle } = this.props;
 
     return (
-      <div id={'story-link'} className={'story-link'}>
-        <a href={ Link } id={'story-url'} className={'story-link'} target={'_blank'}>{ Title }</a>
-        <p id={'story-domain'}>{ Subtitle }</p>
+      <div id={'story-link'} className={'container Headline'}>
+        <div className={'Title'}>
+          <a href={ Link } id={'story-url'} target={'_blank'}>{ Title }</a>
+        </div>
+        <p className={'Subtitle'}>{ Subtitle }</p>
       </div>
     )
   }

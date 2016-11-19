@@ -5,7 +5,7 @@ class TitleComponent extends React.Component {
     let { Text } = this.props
 
     return (
-      <div id={'title'} className={'title'}>
+      <div id={'title'} className={'main-title'}>
         <h1>{Text}</h1>
       </div>
     )

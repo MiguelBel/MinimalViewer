@@ -6,7 +6,9 @@ class CounterComponent extends React.Component {
 
     return (
       <div className={'counter'}>
-        <p id={'stories-counter'}>{ Current }/{ Total }</p>
+        <div className={'indicator'}>
+          <p id={'stories-counter'}><span className={'current'}>{ Current }</span>/{ Total }</p>
+        </div>
       </div>
     )
   }

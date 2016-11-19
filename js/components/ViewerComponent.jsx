@@ -89,9 +89,7 @@ class ViewerComponent extends React.Component {
           Text={title}
         />
 
-        {
-          ItemTemplate.forType(type, relations, currentStory)
-        }
+        { ItemTemplate.forType(type, relations, currentStory) }
 
         <CounterComponent
           Current={String(currentStoryIndex + 1)}

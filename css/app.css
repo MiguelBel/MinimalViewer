@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body {
+  font-family: 'Roboto', serif;
+  color: #566b78;
+  line-height: 24px;
+}
+
 .full-screen {
   height: 100%;
   width: 100%;
@@ -24,8 +32,10 @@
   transform: translateY(-40%);
 }
 
-.story-link {
+.container {
   text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
   position: relative;
   top: 40%;
   -webkit-transform: translateY(-40%);
@@ -39,20 +49,32 @@
 }
 
 a {
-  font-family: 'Libre Baskerville', serif;
   text-decoration: none;
-  font-size: 40px;
+  font-size: 30px;
   color: inherit;
 }
 
-p {
-  font-family: 'Libre Baskerville', serif;
+a:hover {
+  color: #2bde73;
 }
 
 .counter {
   position: absolute;
-  right: 5px;
-  bottom: 0px;
+  bottom: 50px;
+  text-align: center;
+  width: 100%;
+}
+
+.counter .indicator{
+  font-size: 22px;
+  color: black;
+  margin: 0 auto;
+  max-width: 150px;
+  border-top: 2px solid black;
+}
+
+.counter .current {
+  color: #2bde73;
 }
 
 .central-image {
@@ -61,12 +83,40 @@ p {
   left: 45%;
 }
 
-.title {
+.main-title {
   position: absolute;
   top: 0px;
   left: 10px;
 }
 
-.title h1 {
-  font-family: 'Libre Baskerville', serif;
+.Title {
+  margin: 0 auto;
+  line-height: 40px;
+}
+
+.Headline .Title {
+  text-align: center;
+}
+
+.Story .Title {
+  text-align: left;
+}
+
+.Story .Separator {
+  height: 2px;
+  background-color: black;
+  width: 150px;
+  margin-top: 20px; 
+}
+
+.Story .Subtitle {
+  margin: 0 auto;
+  margin-top: 15px;
+  font-size: 16px;
+  text-align: left;
+}
+
+.Headline .Subtitle {
+  margin-left: auto;
+  margin-right: auto;
 }
