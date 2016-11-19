@@ -41,7 +41,9 @@ The JavaScript component is used as below:
           Subtitle: 'domain',
           Link: 'url'
         },
-        color: 'black'
+        primary_color: 'black',
+        secondary_color: 'orange',
+        type: 'headline'
       }
     ]
   )
@@ -63,7 +65,9 @@ A viewer is composed of:
     - __Subtitle:__ Subtitle of the story.
     - __Link:__ Link for the story.
     - __ElementKey:__ The element on which basis you don't want to show the item again. Can be one of the prior or a different one also included in the mapping.
-- **color:** The color for the viewer.
+- **primary_color:** The primary color of the viewer.
+- **secondary_color:** The secondary color of the viewer.
+- **type:** The template choosen (can be headline or story).
 
 Under the `/dist` folder you can see a simple example of how to use the component to build a minimal viewer.
 
@@ -90,9 +94,8 @@ The ports are mapped this way:
 
 The app is intended to be served with statics. If you want to serve the web through statics then the only files which you need are located under the `/dist` folder:
 
-- `index.html`
-- `css/`
-- `img/`
+- `index.html` | Is an example of how to use the next two files
+- `minimal_viewer.css`
 - `minimal_viewer.js`
 
 In order to build the `dist` directory you can execute:
@@ -104,5 +107,4 @@ $ docker-compose exec minimal_viewer npm run build
 ### Contributors
 
 1. Add your feature and do not forget the tests
-2. Build the project to have it updated in dist/
-3. Pull request
+2. Pull request
