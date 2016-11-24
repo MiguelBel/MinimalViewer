@@ -6,7 +6,7 @@
 
 I wanted to develop a simple viewer for HackerNews because when entering the webpage I was annoyed by having to deal with a misleading interface with tons of information which I did not want to see. I was also tired of entering 10 times per day and having to search myself the latest news in the frontpage.
 
-So I developed [this](http://hacker-news-viewer.miguel.im). After that, I realized that I was annoyed with other websites too, and so I created the same kind of viewer for those. Then I realized it could be a component.
+So I developed [this](http://www.minimalviewer.com/viewers/hackernews). After that, I realized that I was annoyed with other websites too, and so I created the same kind of viewer for those. Then I realized it could be a component.
 
 And that is how we got here.
 
