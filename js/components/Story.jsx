@@ -1,34 +1,33 @@
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 
-import ItemTemplate from '../ItemTemplate'
+import HeadlineItem from './HeadlineItem'
+import StoryItem from './StoryItem'
 import Counter from './Counter'
 
-class Story extends Component {
-  render () {
-    const { queueIndex, queueSize, relations, secondaryColor, story, type } = this.props
-
-    return (
-      <div className='full-screen visible'>
-        { ItemTemplate.forType(type, relations, story, secondaryColor) }
-
-        <Counter
-          current={queueIndex}
-          total={queueSize}
-          color={secondaryColor}
-        />
-      </div>
-    )
-  }
+const TEMPLATES = {
+  'headline': HeadlineItem,
+  'story': StoryItem
 }
+const DEFAULT_TEMPLATE = HeadlineItem
 
-const { string, object } = PropTypes
-Story.propTypes = {
-  queueIndex: string.isRequired,
-  queueSize: string.isRequired,
-  relations: object.isRequired,
-  secondaryColor: string.isRequired,
-  story: object.isRequired,
-  type: string.isRequired
+const Story = ({ color, queueIndex, queueSize, relations, story, type }) => {
+  const Template = TEMPLATES[type] || DEFAULT_TEMPLATE
+
+  return (
+    <div className='full-screen visible'>
+      <Template
+        color={color}
+        link={story[relations.Link]}
+        subtitle={story[relations.Subtitle]}
+        title={story[relations.Title]}
+      />
+      <Counter
+        current={queueIndex}
+        total={queueSize}
+        color={color}
+      />
+    </div>
+  )
 }
 
 export default Story
