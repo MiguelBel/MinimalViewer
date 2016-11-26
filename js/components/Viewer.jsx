@@ -4,7 +4,7 @@ import postal from 'postal'
 import Downloader from '../Downloader'
 import Storage from '../Storage'
 
-import Title from './Title'
+import Layout from './Layout'
 import Story from './Story'
 import Loading from './Loading'
 import EmptyStories from './EmptyStories'
@@ -22,7 +22,6 @@ class Viewer extends Component {
     }
 
     this._actionStory = this._actionStory.bind(this)
-    this._markCurrentAsViewed = this._markCurrentAsViewed.bind(this)
     this._store = this._store.bind(this)
   }
 
@@ -56,14 +55,6 @@ class Viewer extends Component {
     }
   }
 
-  _markCurrentAsViewed () {
-    console.log('viewed')
-    let { currentIndex, storyQueue } = this.state
-    let currentStory = storyQueue[currentIndex]
-
-    this._markAsViewed(currentStory)
-  }
-
   render () {
     const {
       currentIndex,
@@ -86,27 +77,22 @@ class Viewer extends Component {
 
     if (isEmpty) {
       return (
-        <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
-          <Title text={title} />
-
+        <Layout id={identifier} color={primary_color} title={title}>
           <EmptyStories />
-        </div>
+        </Layout>
       )
     }
 
     if (isLoading) {
       return (
-        <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
-          <Title text={title} />
-
+        <Layout id={identifier} color={primary_color} title={title}>
           <Loading SecondaryColor={secondary_color}/>
-        </div>
+        </Layout>
       )
     }
 
     return (
-      <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
-        <Title text={title} />
+      <Layout id={identifier} color={primary_color} title={title}>
         <Story
           queueIndex={String(currentIndex + 1)}
           queueSize={String(storyQueue.length)}
@@ -115,7 +101,7 @@ class Viewer extends Component {
           story={currentStory}
           type={type}
         />
-      </div>
+      </Layout>
     )
   }
 

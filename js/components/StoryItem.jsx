@@ -21,10 +21,10 @@ const StoryItem = ({ color, link, subtitle, title }) => {
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
       >
-        <a href={ Link } id='story-url' target='_blank'>{ Title }</a>
+        <a href={link} id='story-url' target='_blank'>{title}</a>
       </div>
       <div className='Separator'></div>
-      <p className='Subtitle'>{ Subtitle }</p>
+      <p className='Subtitle'>{subtitle}</p>
     </div>
   )
 }

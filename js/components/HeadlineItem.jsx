@@ -21,9 +21,9 @@ const HeadLineItem = ({ color, link, subtitle, title }) => {
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
       >
-        <a href={ link } id='story-url' target='_blank'>{ title }</a>
+        <a href={link} id='story-url' target='_blank'>{title}</a>
       </div>
-      <p className='Subtitle'>{ subtitle }</p>
+      <p className='Subtitle'>{subtitle}</p>
     </div>
   )
 }
