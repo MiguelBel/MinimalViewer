@@ -4,14 +4,14 @@ import postal from 'postal'
 import Downloader from '../Downloader'
 import Storage from '../Storage'
 
-import TitleComponent from './TitleComponent'
+import Title from './Title'
 import Story from './Story'
-import LoadingComponent from './LoadingComponent'
-import EmptyStoriesComponent from './EmptyStoriesComponent'
+import Loading from './Loading'
+import EmptyStories from './EmptyStories'
 
 const INITIAL_INDEX = -1
 
-class ViewerComponent extends Component {
+class Viewer extends Component {
   constructor () {
     super()
 
@@ -89,11 +89,9 @@ class ViewerComponent extends Component {
     if (isEmpty) {
       return (
         <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
-          <TitleComponent
-            Text={title}
-          />
+          <Title text={title} />
 
-          <EmptyStoriesComponent />
+          <EmptyStories />
         </div>
       )
     }
@@ -101,18 +99,16 @@ class ViewerComponent extends Component {
     if (isLoading) {
       return (
         <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
-          <TitleComponent
-            Text={title}
-          />
+          <Title text={title} />
 
-          <LoadingComponent SecondaryColor={secondary_color}/>
+          <Loading SecondaryColor={secondary_color}/>
         </div>
       )
     }
 
     return (
       <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
-        <TitleComponent Text={title} />
+        <Title text={title} />
         <Story
           queueIndex={String(currentIndex + 1)}
           queueSize={String(storyQueue.length)}
@@ -186,7 +182,7 @@ class ViewerComponent extends Component {
 }
 
 const { string, object } = PropTypes
-ViewerComponent.propTypes = {
+Viewer.propTypes = {
   identifier: string.isRequired,
   url: string.isRequired,
   relations: object.isRequired,
@@ -196,4 +192,4 @@ ViewerComponent.propTypes = {
   type: string.isRequired
 }
 
-export default ViewerComponent
+export default Viewer

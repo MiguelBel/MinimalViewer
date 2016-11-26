@@ -4,7 +4,7 @@ import postal from 'postal'
 
 import Keyboard from './Keyboard'
 
-import ViewerComponent from 'components/ViewerComponent'
+import Viewer from 'components/Viewer'
 
 class App extends Component {
   constructor (props) {
@@ -52,7 +52,7 @@ class App extends Component {
 
     Keyboard.define(currentViewer.identifier)
     const viewerList = viewers.map((viewer) =>
-      <ViewerComponent
+      <Viewer
         url={viewer.url}
         relations={viewer.relations}
         identifier={viewer.identifier}

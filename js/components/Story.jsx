@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 
 import ItemTemplate from '../ItemTemplate'
-import CounterComponent from './CounterComponent'
+import Counter from './Counter'
 
 class Story extends Component {
   render () {
@@ -11,10 +11,10 @@ class Story extends Component {
       <div className='full-screen visible'>
         { ItemTemplate.forType(type, relations, story, secondaryColor) }
 
-        <CounterComponent
-          Current={queueIndex}
-          Total={queueSize}
-          SecondaryColor={secondaryColor}
+        <Counter
+          current={queueIndex}
+          total={queueSize}
+          color={secondaryColor}
         />
       </div>
     )
