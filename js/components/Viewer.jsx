@@ -34,8 +34,6 @@ class Viewer extends Component {
 
   componentDidMount () {
     const channel = postal.channel()
-    const { identifier } = this.props
-
     channel.subscribe('action_triggered', this._actionStory)
   }
 

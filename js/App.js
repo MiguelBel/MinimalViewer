@@ -6,52 +6,54 @@ import Keyboard from './Keyboard'
 
 import Viewer from 'components/Viewer'
 
+const INITIAL_INDEX = -1
+
 class App extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      currentViewer: null
+      currentIndex: INITIAL_INDEX,
     }
 
     this._changeViewer = this._changeViewer.bind(this)
   }
 
   componentWillMount () {
-    const { viewers } = this.props
-    const firstViewer = viewers[0]
-    this.setState({ currentViewer: firstViewer })
+    this.setState({ currentIndex: 0 })
 
     const channel = postal.channel()
     channel.subscribe('action_triggered', this._changeViewer)
   }
 
   _changeViewer ({ name }) {
-    const { currentViewer } = this.state
+    const { currentIndex } = this.state
     const { viewers } = this.props
-    let viewer
+    let index
 
     switch (name) {
       case 'next_viewer':
-        viewer = viewers[viewers.indexOf(currentViewer) + 1]
+        index = currentIndex + 1
         break
 
       case 'previous_viewer':
-        viewer = viewers[viewers.indexOf(currentViewer) - 1]
+        index = currentIndex - 1
         break
     }
 
-    if (viewer) {
-      this.setState({ currentViewer: viewer })
+    if (viewers[index]) {
+      this.setState({ currentIndex: index })
     }
   }
 
   render () {
     const { viewers } = this.props
-    const { currentViewer } = this.state
+    const { currentIndex } = this.state
+    const viewer = viewers[currentIndex]
 
-    Keyboard.define(currentViewer.identifier)
-    const viewerList = viewers.map((viewer) =>
+    Keyboard.define(viewer.identifier)
+
+    return (
       <Viewer
         url={viewer.url}
         relations={viewer.relations}
@@ -62,12 +64,6 @@ class App extends Component {
         secondary_color={viewer.secondary_color}
         type={viewer.type}
       />
-    )
-
-    return (
-      <div className='viewers-containers'>
-        {viewerList}
-      </div>
     )
   }
 
