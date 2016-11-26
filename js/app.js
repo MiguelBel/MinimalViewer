@@ -1,98 +1,109 @@
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component, PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import postal from 'postal'
 
-import Keyboard from './Keyboard';
+import Keyboard from './Keyboard'
 
-import ViewerComponent from 'components/ViewerComponent';
-const postal = require("postal");
+import ViewerComponent from 'components/ViewerComponent'
 
-class Index extends React.Component {
-  constructor(props) {
-    super(props);
+class App extends Component {
+  constructor (props) {
+    super(props)
+
     this.state = {}
+
+    this._changeViewer = this._changeViewer.bind(this)
   }
 
-  componentWillMount() {
-    let { viewers } = this.props;
-    let first_viewer = viewers[0];
-    this.setState({ currentViewer: first_viewer });
+  componentWillMount () {
+    const { viewers } = this.props
+    const firstViewer = viewers[0]
+    this.setState({ currentViewer: firstViewer })
 
+    const channel = postal.channel()
+    channel.subscribe('action_triggered', this._changeViewer)
+  }
+
+  _changeViewer ({ name }) {
+    const { viewers } = this.props
+    const { currentViewer } = this.state
+
+    const currentElement = document.getElementById(currentViewer.identifier)
+    const nextViewer = viewers[viewers.indexOf(currentViewer) + 1]
+    const previousViewer = viewers[viewers.indexOf(currentViewer) - 1]
+
+    switch (name) {
+      case 'next_viewer':
+        if (nextViewer) {
+          currentElement.classList.remove('visible')
+          this.setState({ currentViewer: nextViewer })
+          const element = document.getElementById(nextViewer.identifier)
+          element.classList.add('visible')
+        }
+        break
+
+      case 'previous_viewer':
+        if (previousViewer) {
+          currentElement.classList.remove('visible')
+          this.setState({ currentViewer: previousViewer })
+          const element = document.getElementById(previousViewer.identifier)
+          element.classList.add('visible')
+        }
+        break
+    }
+  }
+
+  _notifyViewerLoaded (viewer) {
     let channel = postal.channel()
-    channel.subscribe('action_triggered', function(data){
-      if(data.name == 'next_viewer') {
-        let { currentViewer } = this.state;
-        let next_viewer = viewers[viewers.indexOf(currentViewer) + 1];
-        if(next_viewer != undefined) {
-          let current_element = document.getElementById(currentViewer.identifier);
-          current_element.classList.remove("visible");
-          this.setState({ currentViewer: next_viewer });
-          let element = document.getElementById(next_viewer.identifier);
-          element.classList.add("visible");
-        }
-      }
-
-      if(data.name == 'previous_viewer') {
-        let { currentViewer } = this.state;
-        let previous_viewer = viewers[viewers.indexOf(currentViewer) - 1];
-        if(previous_viewer != undefined) {
-          let current_element = document.getElementById(currentViewer.identifier);
-          current_element.classList.remove("visible");
-          this.setState({ currentViewer: previous_viewer });
-          let element = document.getElementById(previous_viewer.identifier);
-          element.classList.add("visible");
-        }
-      }
-    }.bind(this));
-  }
-
-  render() {
-    let { viewers } = this.props;
-    let { currentViewer } = this.state;
-
-    Keyboard.define(currentViewer.identifier);
-    this._notify_viewer_loaded(currentViewer);
-
-    return (
-      <div className={'viewers-containers'}>
-        {viewers.map((viewer) =>
-          <ViewerComponent
-            url={viewer.url}
-            relations={viewer.relations}
-            identifier={viewer.identifier}
-            key={viewer.identifier}
-            title={viewer.title}
-            primary_color={viewer.primary_color}
-            secondary_color={viewer.secondary_color}
-            type={viewer.type}
-            defaultViewerIdentifier={currentViewer.identifier}
-          />
-        )}
-      </div>
-    )
-  }
-
-  _notify_viewer_loaded(viewer) {
-    let channel = postal.channel();
 
     channel.publish(
       'viewer_loaded',
       {
         element: viewer.identifier
       }
-    );
+    )
 
   }
+
+  render () {
+    const { viewers } = this.props
+    const { currentViewer } = this.state
+
+    Keyboard.define(currentViewer.identifier)
+    this._notifyViewerLoaded(currentViewer)
+    const viewerList = viewers.map((viewer) =>
+      <ViewerComponent
+        url={viewer.url}
+        relations={viewer.relations}
+        identifier={viewer.identifier}
+        key={viewer.identifier}
+        title={viewer.title}
+        primary_color={viewer.primary_color}
+        secondary_color={viewer.secondary_color}
+        type={viewer.type}
+        defaultViewerIdentifier={currentViewer.identifier}
+      />
+    )
+
+    return (
+      <div className='viewers-containers'>
+        {viewerList}
+      </div>
+    )
+  }
+
 }
 
-Index.propTypes = {
-  viewers: PropTypes.array.isRequired
-};
+const { array } = PropTypes
+App.propTypes = {
+  viewers: array.isRequired
+}
 
 module.exports = {
   initialize: function (selector, configuration) {
     ReactDOM.render(
-      <Index viewers={configuration} />,
+      <App viewers={configuration} />,
       document.querySelector(selector)
-    );
+    )
   }
-};
+}
