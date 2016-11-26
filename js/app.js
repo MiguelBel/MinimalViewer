@@ -10,7 +10,9 @@ class App extends Component {
   constructor (props) {
     super(props)
 
-    this.state = {}
+    this.state = {
+      currentViewer: null
+    }
 
     this._changeViewer = this._changeViewer.bind(this)
   }
@@ -25,44 +27,23 @@ class App extends Component {
   }
 
   _changeViewer ({ name }) {
-    const { viewers } = this.props
     const { currentViewer } = this.state
-
-    const currentElement = document.getElementById(currentViewer.identifier)
-    const nextViewer = viewers[viewers.indexOf(currentViewer) + 1]
-    const previousViewer = viewers[viewers.indexOf(currentViewer) - 1]
+    const { viewers } = this.props
+    let viewer
 
     switch (name) {
       case 'next_viewer':
-        if (nextViewer) {
-          currentElement.classList.remove('visible')
-          this.setState({ currentViewer: nextViewer })
-          const element = document.getElementById(nextViewer.identifier)
-          element.classList.add('visible')
-        }
+        viewer = viewers[viewers.indexOf(currentViewer) + 1]
         break
 
       case 'previous_viewer':
-        if (previousViewer) {
-          currentElement.classList.remove('visible')
-          this.setState({ currentViewer: previousViewer })
-          const element = document.getElementById(previousViewer.identifier)
-          element.classList.add('visible')
-        }
+        viewer = viewers[viewers.indexOf(currentViewer) - 1]
         break
     }
-  }
 
-  _notifyViewerLoaded (viewer) {
-    let channel = postal.channel()
-
-    channel.publish(
-      'viewer_loaded',
-      {
-        element: viewer.identifier
-      }
-    )
-
+    if (viewer) {
+      this.setState({ currentViewer: viewer })
+    }
   }
 
   render () {
@@ -70,7 +51,6 @@ class App extends Component {
     const { currentViewer } = this.state
 
     Keyboard.define(currentViewer.identifier)
-    this._notifyViewerLoaded(currentViewer)
     const viewerList = viewers.map((viewer) =>
       <ViewerComponent
         url={viewer.url}
@@ -81,7 +61,6 @@ class App extends Component {
         primary_color={viewer.primary_color}
         secondary_color={viewer.secondary_color}
         type={viewer.type}
-        defaultViewerIdentifier={currentViewer.identifier}
       />
     )
 

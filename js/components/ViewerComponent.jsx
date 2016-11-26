@@ -1,67 +1,94 @@
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
+import postal from 'postal'
 
-import Downloader from '../Downloader';
-import Storage from '../Storage';
+import Downloader from '../Downloader'
+import Storage from '../Storage'
 
-import ItemTemplate from '../ItemTemplate';
+import TitleComponent from './TitleComponent'
+import Story from './Story'
+import LoadingComponent from './LoadingComponent'
+import EmptyStoriesComponent from './EmptyStoriesComponent'
 
-import CounterComponent from './CounterComponent';
-import TitleComponent from './TitleComponent';
-import LoadingComponent from './LoadingComponent';
-import EmptyStoriesComponent from './EmptyStoriesComponent';
+const INITIAL_INDEX = -1
 
-const postal = require("postal");
+class ViewerComponent extends Component {
+  constructor () {
+    super()
 
-class ViewerComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
+    this.state = {
+      currentIndex: INITIAL_INDEX,
+      isEmpty: false,
+      isLoading: true
+    }
+
+    this._actionStory = this._actionStory.bind(this)
+    this._markCurrentAsViewed = this._markCurrentAsViewed.bind(this)
+    this._store = this._store.bind(this)
   }
 
-  componentWillMount() {
-    let { url } = this.props;
+  componentWillMount () {
+    const { url } = this.props
 
-    this.setState({ loading: true, empty: false });
-
-    Downloader.create(url, (stories) => {
-      this._store(stories);
-    });
+    Downloader.create(url, this._store)
   }
 
-  componentDidMount() {
-    let channel = postal.channel();
-    let { identifier } = this.props;
+  componentDidMount () {
+    const channel = postal.channel()
+    const { identifier } = this.props
 
-    channel.subscribe('action_triggered', function(data) {
-      if(data.element == identifier) {
-        if(data.name == 'next') {
-          this._next();
-        }
-
-        if(data.name == 'prev') {
-          this._prev();
-        }
-
-        if(data.name == 'open') {
-          this._open_current();
-        }
-      }
-    }.bind(this));
-
-    channel.subscribe('viewer_loaded', function(data) {
-      if (data.element == identifier) {
-        this._mark_first_as_viewed();
-      }
-    }.bind(this));
+    channel.subscribe('action_triggered', this._actionStory)
   }
 
-  render() {
-    let { loading, currentStory, storyQueue, currentStoryIndex, empty } = this.state;
-    let { relations, identifier, title, primary_color, secondary_color, type, defaultViewerIdentifier } = this.props
+  _actionStory ({ element, name }) {
+    const { identifier } = this.props
+    if (element !== identifier) return
 
-    if (empty) {
+    switch (name) {
+      case 'next':
+        this._next()
+        break
+
+      case 'prev':
+        this._prev()
+        break
+
+      case 'open':
+        this._openCurrent()
+        break
+    }
+  }
+
+  _markCurrentAsViewed () {
+    console.log('viewed')
+    let { currentIndex, storyQueue } = this.state
+    let currentStory = storyQueue[currentIndex]
+
+    this._markAsViewed(currentStory)
+  }
+
+  render () {
+    const {
+      currentIndex,
+      isLoading,
+      isEmpty,
+
+      storyQueue,
+    } = this.state
+    const {
+      relations,
+      identifier,
+      title,
+      primary_color,
+      secondary_color,
+      type,
+    } = this.props
+
+    const currentStory = storyQueue && storyQueue[currentIndex]
+    this._markAsViewed(currentStory)
+
+    if (isEmpty) {
       return (
-        <div id={identifier} style={{color: primary_color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
+        <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
           <TitleComponent
             Text={title}
           />
@@ -71,9 +98,9 @@ class ViewerComponent extends React.Component {
       )
     }
 
-    if (loading || currentStory === undefined) {
+    if (isLoading) {
       return (
-        <div id={identifier} style={{color: primary_color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
+        <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
           <TitleComponent
             Text={title}
           />
@@ -84,103 +111,89 @@ class ViewerComponent extends React.Component {
     }
 
     return (
-      <div id={identifier} style={{color: primary_color}}  className={'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '')}>
-        <TitleComponent
-          Text={title}
-        />
-
-        { ItemTemplate.forType(type, relations, currentStory, secondary_color) }
-
-        <CounterComponent
-          Current={String(currentStoryIndex + 1)}
-          Total={String(storyQueue.length)}
-          SecondaryColor={secondary_color}
+      <div id={identifier} style={{color: primary_color}} className='full-screen visible'>
+        <TitleComponent Text={title} />
+        <Story
+          queueIndex={String(currentIndex + 1)}
+          queueSize={String(storyQueue.length)}
+          relations={relations}
+          secondaryColor={secondary_color}
+          story={currentStory}
+          type={type}
         />
       </div>
     )
   }
 
-  _store(stories) {
-    let { defaultViewerIdentifier, identifier, relations } = this.props
-    const readStories = Storage.retrieve(identifier);
-    const filteredStories = stories.filter(story => readStories.indexOf(story[relations.ElementKey]) == -1);
+  _store (stories) {
+    const { identifier, relations } = this.props
+    const readStories = Storage.retrieve(identifier)
+    const filteredStories = stories.filter(story =>
+      readStories.indexOf(story[relations.ElementKey]) === -1
+    )
 
     this.setState({
-      storyQueue: filteredStories,
-      loading: false,
-      empty: filteredStories.length == 0,
-      currentStoryIndex: 0
-    });
-
-    if (filteredStories.length > 0) {
-      this._show(filteredStories[0]);
-      if (defaultViewerIdentifier == identifier) {
-        this._mark_first_as_viewed();
-      }
-    }
+      currentIndex: 0,
+      isEmpty: filteredStories.length == 0,
+      isLoading: false,
+      storyQueue: filteredStories
+    })
   }
 
-  _setByIndex(index) {
-    let story = this.state.storyQueue[index];
+  _setByIndex (index) {
+    const story = this.state.storyQueue[index]
 
-    this.setState({ currentStoryIndex: index });
-
-    this._show(story);
-    this._mark_as_viewed(story);
+    this.setState({
+      currentIndex: index,
+    })
   }
 
-  _show(story) {
-    this.setState({ currentStory: story });
-  }
-
-  _mark_as_viewed(story) {
-    let { identifier, relations } = this.props
+  _markAsViewed (story) {
+    const { identifier, relations } = this.props
 
     if (story) {
-      Storage.store(identifier, story[relations.ElementKey]);
+      Storage.store(identifier, story[relations.ElementKey])
     }
   }
 
-  _mark_first_as_viewed() {
-    let { storyQueue } = this.state
-    let first_story = storyQueue[0];
+  _next () {
+    const { currentIndex, storyQueue } = this.state
+    const validIndex = currentIndex < (storyQueue.length - 1)
 
-    this._mark_as_viewed(first_story);
-  }
-
-  _next() {
-    let existsNextStory = this.state.currentStoryIndex < (this.state.storyQueue.length - 1);
-
-    if (existsNextStory) {
-      this._setByIndex(this.state.currentStoryIndex + 1);
+    if (validIndex) {
+      this._setByIndex(currentIndex + 1)
     }
   }
 
-  _prev() {
-    let existsPreviousStory = this.state.currentStoryIndex > 0;
+  _prev () {
+    const { currentIndex } = this.state
+    const validIndex = currentIndex > 0
 
-    if (existsPreviousStory) {
-      this._setByIndex(this.state.currentStoryIndex - 1);
+    if (validIndex) {
+      this._setByIndex(currentIndex - 1)
     }
   }
 
-  _open_current() {
-    this._open(this.state.currentStory.url);
+  _openCurrent () {
+    const { currentIndex, storyQueue } = this.state
+    const currentStory = storyQueue[currentIndex]
+    this._open(currentStory.url)
   }
 
-  _open(url) {
-    window.open(url);
+  _open (url) {
+    window.open(url)
   }
 }
 
+const { string, object } = PropTypes
 ViewerComponent.propTypes = {
-  identifier: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
-  relations: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired,
-  primary_color: PropTypes.string.isRequired,
-  secondary_color: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired
-};
+  identifier: string.isRequired,
+  url: string.isRequired,
+  relations: object.isRequired,
+  title: string.isRequired,
+  primary_color: string.isRequired,
+  secondary_color: string.isRequired,
+  type: string.isRequired
+}
 
-export default ViewerComponent;
+export default ViewerComponent

@@ -13,4 +13,4 @@ const Downloader = {
   }
 }
 
-export default Downloader;
+export default Downloader

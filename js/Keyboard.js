@@ -1,77 +1,46 @@
-const postal = require("postal");
+import postal from 'postal'
 
+const [LEFT, UP, RIGHT, DOWN, ENTER, SPACE] = [37, 38, 39, 40, 13, 32]
+const VALID_KEY_CODES = [LEFT, UP, RIGHT, DOWN, ENTER, SPACE]
 const Keyboard = {
   define(identifier) {
-    this.identifier = identifier;
+    this.identifier = identifier
 
     document.onkeydown = (e) => {
-      const channel = postal.channel();
-      const leftArrowCode = '37'
-      const upArrowCode = '38'
-      const rightArrowCode = '39'
-      const downArrowCode = '40'
-      const enterCode = '13'
-      const spaceBarCode = '32'
+      const { keyCode } = e
+      if (!VALID_KEY_CODES.includes(keyCode)) return
+      e.preventDefault()
 
-      if(e.keyCode == leftArrowCode){
-        e.preventDefault();
-        channel.publish(
-          'action_triggered',
-          {
-            name: 'prev',
-            element: this.identifier
-          }
-        );
-      }
-
-      if(e.keyCode == upArrowCode){
-        e.preventDefault();
-        channel.publish(
-          'action_triggered',
-          {
-            name: 'previous_viewer',
-            element: this.identifier
-          }
-        );
-      }
-
-      if(e.keyCode == rightArrowCode){
-        e.preventDefault();
-        channel.publish(
-          'action_triggered',
-          {
-            name: 'next',
-            element: this.identifier
-          }
-        );
-      }
-
-      if(e.keyCode == enterCode || e.keyCode == spaceBarCode){
-        e.preventDefault();
-        channel.publish(
-          'action_triggered',
-          {
-            name: 'open',
-            element: this.identifier
-          }
-        );
-      }
-
-      if(e.keyCode == downArrowCode){
-        e.preventDefault();
-        channel.publish(
-          'action_triggered',
-          {
-            name: 'next_viewer',
-            element: this.identifier
-          }
-        );
+      switch (keyCode) {
+        case UP:
+          return this._triggerAction('previous_viewer')
+        case DOWN:
+          return this._triggerAction('next_viewer')
+        case LEFT:
+          return this._triggerAction('prev')
+        case RIGHT:
+          return this._triggerAction('next')
+        case ENTER:
+        case SPACE:
+          return this._triggerAction('open')
       }
     }
 
-    window.addEventListener('touchstart', this._handleTouchStart.bind(this), false);
-    window.addEventListener('touchmove', this._handleTouchMove.bind(this), false);
-    window.addEventListener('touchend', this._handleTouchEnd.bind(this), false);
+    window.addEventListener('touchstart', this._handleTouchStart.bind(this), false)
+    window.addEventListener('touchmove', this._handleTouchMove.bind(this), false)
+    window.addEventListener('touchend', this._handleTouchEnd.bind(this), false)
+  },
+
+  _triggerAction (name) {
+    const channel = postal.channel()
+
+    channel.publish(
+      'action_triggered',
+      {
+        name,
+        element: this.identifier
+      }
+    )
   },
 
   _handleTouchStart(e) {
@@ -97,39 +66,21 @@ const Keyboard = {
   },
 
   _handleTouchEnd() {
-    const channel = postal.channel();
+    const channel = postal.channel()
 
     if (!this.touch.current.x) {
-      return channel.publish(
-        'action_triggered',
-        {
-          name: 'open',
-          element: this.identifier
-        }
-      );
+      return this._triggerAction('open')
     }
 
     const story = document.querySelector('#story-link')
     story.style.transform = ''
 
     if (this.touch.current.x < this.touch.start.x) {
-      channel.publish(
-        'action_triggered',
-        {
-          name: 'next',
-          element: this.identifier
-        }
-      );
+      return this._triggerAction('next')
     } else {
-      channel.publish(
-        'action_triggered',
-        {
-          name: 'prev',
-          element: this.identifier
-        }
-      );
+      return this._triggerAction('prev')
     }
   }
 }
 
-export default Keyboard;
+export default Keyboard

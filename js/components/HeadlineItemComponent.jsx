@@ -1,16 +1,23 @@
 import React, { PropTypes } from 'react';
 
 class HeadlineItemComponent extends React.Component {
-  componentDidMount() {
-    let { SecondaryColor } = this.props;
+  constructor () {
+    super()
 
-    document.querySelector('#url-container').onmouseover = function() {
-      this.style.color = SecondaryColor;
-    }
+    this._handleMouseOver = this._handleMouseOver.bind(this)
+    this._handleMouseOut = this._handleMouseOut.bind(this)
+  }
 
-    document.querySelector('#url-container').onmouseout = function() {
-      this.style.color = 'inherit';
-    }
+  _handleMouseOver (e) {
+    const { target: { style } } = e
+
+    style.color = this.props.SecondaryColor
+  }
+
+  _handleMouseOut (e) {
+    const { target: { style } } = e
+
+    style.color = 'inherit'
   }
 
   render() {
@@ -18,7 +25,12 @@ class HeadlineItemComponent extends React.Component {
 
     return (
       <div id={'story-link'} className={'container Headline'}>
-        <div id={'url-container'} className={'Title'}>
+        <div
+          id={'url-container'}
+          className={'Title'}
+          onMouseOver={this._handleMouseOver}
+          onMouseOut={this._handleMouseOut}
+        >
           <a href={ Link } id={'story-url'} target={'_blank'}>{ Title }</a>
         </div>
         <p className={'Subtitle'}>{ Subtitle }</p>
