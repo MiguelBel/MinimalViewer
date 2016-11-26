@@ -5,9 +5,7 @@ import Downloader from '../Downloader'
 import Storage from '../Storage'
 
 import Layout from './Layout'
-import Story from './Story'
-import Loading from './Loading'
-import EmptyStories from './EmptyStories'
+import ComponentBuilder from './ComponentBuilder'
 
 const INITIAL_INDEX = -1
 
@@ -18,7 +16,8 @@ class Viewer extends Component {
     this.state = {
       currentIndex: INITIAL_INDEX,
       isEmpty: false,
-      isLoading: true
+      isLoading: true,
+      storyQueue: []
     }
 
     this._actionStory = this._actionStory.bind(this)
@@ -33,7 +32,11 @@ class Viewer extends Component {
 
   componentDidMount () {
     const channel = postal.channel()
-    channel.subscribe('action_triggered', this._actionStory)
+    this.subscription = channel.subscribe('action_triggered', this._actionStory)
+  }
+
+  componentWillUnmount () {
+    this.subscription.unsubscribe()
   }
 
   _actionStory ({ element, name }) {
@@ -55,56 +58,6 @@ class Viewer extends Component {
     }
   }
 
-  render () {
-    const {
-      currentIndex,
-      isLoading,
-      isEmpty,
-
-      storyQueue,
-    } = this.state
-    const {
-      relations,
-      identifier,
-      title,
-      primary_color,
-      secondary_color,
-      type,
-    } = this.props
-
-    const currentStory = storyQueue && storyQueue[currentIndex]
-    this._markAsViewed(currentStory)
-
-    if (isEmpty) {
-      return (
-        <Layout id={identifier} color={primary_color} title={title}>
-          <EmptyStories />
-        </Layout>
-      )
-    }
-
-    if (isLoading) {
-      return (
-        <Layout id={identifier} color={primary_color} title={title}>
-          <Loading SecondaryColor={secondary_color}/>
-        </Layout>
-      )
-    }
-
-    return (
-      <Layout id={identifier} color={primary_color} title={title}>
-        <Story
-          queueIndex={String(currentIndex + 1)}
-          queueSize={String(storyQueue.length)}
-          relations={relations}
-          secondaryColor={secondary_color}
-          story={currentStory}
-          type={type}
-        />
-      </Layout>
-    )
-  }
-
   _store (stories) {
     const { identifier, relations } = this.props
     const readStories = Storage.retrieve(identifier)
@@ -114,17 +67,9 @@ class Viewer extends Component {
 
     this.setState({
       currentIndex: 0,
-      isEmpty: filteredStories.length == 0,
+      isEmpty: filteredStories.length === 0,
       isLoading: false,
       storyQueue: filteredStories
-    })
-  }
-
-  _setByIndex (index) {
-    const story = this.state.storyQueue[index]
-
-    this.setState({
-      currentIndex: index,
     })
   }
 
@@ -138,19 +83,21 @@ class Viewer extends Component {
 
   _next () {
     const { currentIndex, storyQueue } = this.state
-    const validIndex = currentIndex < (storyQueue.length - 1)
+    const index = currentIndex + 1
+    const validIndex = index <= (storyQueue.length - 1)
 
     if (validIndex) {
-      this._setByIndex(currentIndex + 1)
+      this.setState({ currentIndex: index })
     }
   }
 
   _prev () {
     const { currentIndex } = this.state
-    const validIndex = currentIndex > 0
+    const index = currentIndex - 1
+    const validIndex = index >= 0
 
     if (validIndex) {
-      this._setByIndex(currentIndex - 1)
+      this.setState({ currentIndex: index })
     }
   }
 
@@ -163,17 +110,40 @@ class Viewer extends Component {
   _open (url) {
     window.open(url)
   }
+
+  render () {
+    const { currentIndex, isEmpty, isLoading, storyQueue } = this.state
+    const { identifier, primaryColor, relations, secondaryColor, title, type, } = this.props
+
+    const currentStory = storyQueue && storyQueue[currentIndex]
+    this._markAsViewed(currentStory)
+
+    return (
+      <Layout id={identifier} color={primaryColor} title={title}>
+        <ComponentBuilder
+          isEmpty={isEmpty}
+          isLoading={isLoading}
+          queueIndex={String(currentIndex + 1)}
+          queueSize={String(storyQueue.length)}
+          relations={relations}
+          color={secondaryColor}
+          story={currentStory}
+          type={type}
+        />
+      </Layout>
+    )
+  }
 }
 
 const { string, object } = PropTypes
 Viewer.propTypes = {
   identifier: string.isRequired,
-  url: string.isRequired,
+  primaryColor: string.isRequired,
   relations: object.isRequired,
+  secondaryColor: string.isRequired,
   title: string.isRequired,
-  primary_color: string.isRequired,
-  secondary_color: string.isRequired,
-  type: string.isRequired
+  type: string.isRequired,
+  url: string.isRequired
 }
 
 export default Viewer

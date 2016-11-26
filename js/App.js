@@ -6,24 +6,26 @@ import Keyboard from './Keyboard'
 
 import Viewer from 'components/Viewer'
 
-const INITIAL_INDEX = -1
+const INITIAL_INDEX = 0
 
 class App extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      currentIndex: INITIAL_INDEX,
+      currentIndex: INITIAL_INDEX
     }
 
     this._changeViewer = this._changeViewer.bind(this)
   }
 
-  componentWillMount () {
-    this.setState({ currentIndex: 0 })
-
+  componentDidMount () {
     const channel = postal.channel()
-    channel.subscribe('action_triggered', this._changeViewer)
+    this.subscription = channel.subscribe('action_triggered', this._changeViewer)
+  }
+
+  componentWillUnmount () {
+    this.subscription.unsubscribe()
   }
 
   _changeViewer ({ name }) {
@@ -60,8 +62,8 @@ class App extends Component {
         identifier={viewer.identifier}
         key={viewer.identifier}
         title={viewer.title}
-        primary_color={viewer.primary_color}
-        secondary_color={viewer.secondary_color}
+        primaryColor={viewer.primary_color}
+        secondaryColor={viewer.secondary_color}
         type={viewer.type}
       />
     )
