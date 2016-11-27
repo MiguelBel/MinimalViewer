@@ -1,28 +1,26 @@
+const EMPTY = []
+
 const Storage = {
-  retrieve(identifier) {
-    let items = JSON.parse(
+  retrieve (identifier) {
+    const items = JSON.parse(
       localStorage.getItem(`viewer_${identifier}`)
-    );
+    )
 
-    return items || this._empty();
+    return items || EMPTY
   },
 
-  store(identifier, element) {
-    let alreadyStored = this.retrieve(identifier)
-    let isPendingToBeRegistered = alreadyStored.indexOf(element) == -1
+  store (identifier, element) {
+    const store = this.retrieve(identifier)
+    const isAlreadyRegistered = store.includes(element)
 
-    if(isPendingToBeRegistered) {
-      alreadyStored.push(element);
+    if (isAlreadyRegistered) return
 
-      localStorage.setItem(
-        `viewer_${identifier}`,
-        JSON.stringify(alreadyStored)
-      );
-    }
-  },
-
-  _empty() {
-    return [];
+    store.push(element)
+    localStorage.setItem(
+      `viewer_${identifier}`,
+      JSON.stringify(store)
+    )
   }
 }
+
 export default Storage

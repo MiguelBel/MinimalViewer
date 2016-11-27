@@ -1,7 +1,7 @@
 var path = require('path');
 
 module.exports ={
-  entry: ['whatwg-fetch', './js/app.js'],
+  entry: ['whatwg-fetch', './js/App.js'],
   output: {
     filename: 'minimal_viewer.js',
     path: '/minimal_viewer/dist/',
@@ -14,7 +14,7 @@ module.exports ={
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'react']
+          presets: ['es2015', 'stage-0', 'react']
         }
       },
     ]
