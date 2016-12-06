@@ -39,7 +39,8 @@ The JavaScript component is used as below:
           ElementKey: 'id',
           Title: 'title',
           Subtitle: 'domain',
-          Link: 'url'
+          Link: 'url',
+          Root: 'headlines'
         },
         primary_color: 'black',
         secondary_color: 'orange',
@@ -59,12 +60,13 @@ A viewer is composed of:
 - **title:** The title which will be shown at the upper left part.
 - **identifier:** The identifier of the viewer. It's used to identify the internal process.
 - **url:** The URL of the API. It's the URL from which the component will download the data.
-- **relations:** The mapping of the downloaded JSON (the JSON must be a plain array).
+- **relations:** The mapping of the downloaded JSON (the JSON must be a plain array with or without a root).
   - It should carry:
     - __Title:__ Title of the story.
     - __Subtitle:__ Subtitle of the story.
     - __Link:__ Link for the story.
-    - __ElementKey:__ The element on which basis you don't want to show the item again. Can be one of the prior or a different one also included in the mapping.
+    - __ElementKey:__ (optional) The element on which basis you don't want to show the item again. Can be one of the prior or a different one also included in the mapping.
+    - __Root:__ (optional) If the json have a root you can configure it here.
 - **primary_color:** The primary color of the viewer.
 - **secondary_color:** The secondary color of the viewer.
 - **type:** The template choosen (can be headline or story).

@@ -1,14 +1,18 @@
 const Downloader = {
-  create (url, fn) {
+  create (url, fn, root) {
     this.API_URL = url
-    this.download_stories(fn)
+    this.download_stories(fn, root)
   },
 
-  download_stories (fn) {
+  download_stories (fn, root) {
     fetch(this.API_URL).then(response => {
-      response.json().then(parsed =>
-        fn(parsed)
-      )
+      response.json().then(parsed => {
+        if (root) {
+          fn(parsed[root])
+        } else {
+          fn(parsed)
+        }
+      })
     })
   }
 }

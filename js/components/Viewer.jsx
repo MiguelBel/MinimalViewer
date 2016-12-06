@@ -25,9 +25,9 @@ class Viewer extends Component {
   }
 
   componentWillMount () {
-    const { url } = this.props
+    const { url, relations } = this.props
 
-    Downloader.create(url, this._store)
+    Downloader.create(url, this._store, relations.Root)
   }
 
   componentDidMount () {
