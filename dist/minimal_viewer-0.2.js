@@ -523,13 +523,17 @@ var MinimalViewer =
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _Keyboard = __webpack_require__(180);
+	var _postal = __webpack_require__(180);
+
+	var _postal2 = _interopRequireDefault(_postal);
+
+	var _Keyboard = __webpack_require__(184);
 
 	var _Keyboard2 = _interopRequireDefault(_Keyboard);
 
-	var _ViewerComponent = __webpack_require__(185);
+	var _Viewer = __webpack_require__(185);
 
-	var _ViewerComponent2 = _interopRequireDefault(_ViewerComponent);
+	var _Viewer2 = _interopRequireDefault(_Viewer);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -539,106 +543,93 @@ var MinimalViewer =
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var postal = __webpack_require__(181);
+	var INITIAL_INDEX = 0;
 
-	var Index = function (_React$Component) {
-	  _inherits(Index, _React$Component);
+	var App = function (_Component) {
+	  _inherits(App, _Component);
 
-	  function Index(props) {
-	    _classCallCheck(this, Index);
+	  function App(props) {
+	    _classCallCheck(this, App);
 
-	    var _this = _possibleConstructorReturn(this, (Index.__proto__ || Object.getPrototypeOf(Index)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-	    _this.state = {};
+	    _this.state = {
+	      currentIndex: INITIAL_INDEX
+	    };
+
+	    _this._changeViewer = _this._changeViewer.bind(_this);
 	    return _this;
 	  }
 
-	  _createClass(Index, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
+	  _createClass(App, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var channel = _postal2.default.channel();
+	      this.subscription = channel.subscribe('action_triggered', this._changeViewer);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.subscription.unsubscribe();
+	    }
+	  }, {
+	    key: '_changeViewer',
+	    value: function _changeViewer(_ref) {
+	      var name = _ref.name;
+	      var currentIndex = this.state.currentIndex;
 	      var viewers = this.props.viewers;
 
-	      var first_viewer = viewers[0];
-	      this.setState({ currentViewer: first_viewer });
+	      var index = void 0;
 
-	      var channel = postal.channel();
-	      channel.subscribe('action_triggered', function (data) {
-	        if (data.name == 'next_viewer') {
-	          var currentViewer = this.state.currentViewer;
+	      switch (name) {
+	        case 'next_viewer':
+	          index = currentIndex + 1;
+	          break;
 
-	          var next_viewer = viewers[viewers.indexOf(currentViewer) + 1];
-	          if (next_viewer != undefined) {
-	            var current_element = document.getElementById(currentViewer.identifier);
-	            current_element.classList.remove("visible");
-	            this.setState({ currentViewer: next_viewer });
-	            var element = document.getElementById(next_viewer.identifier);
-	            element.classList.add("visible");
-	          }
-	        }
+	        case 'previous_viewer':
+	          index = currentIndex - 1;
+	          break;
+	      }
 
-	        if (data.name == 'previous_viewer') {
-	          var _currentViewer = this.state.currentViewer;
-
-	          var previous_viewer = viewers[viewers.indexOf(_currentViewer) - 1];
-	          if (previous_viewer != undefined) {
-	            var _current_element = document.getElementById(_currentViewer.identifier);
-	            _current_element.classList.remove("visible");
-	            this.setState({ currentViewer: previous_viewer });
-	            var _element = document.getElementById(previous_viewer.identifier);
-	            _element.classList.add("visible");
-	          }
-	        }
-	      }.bind(this));
+	      if (viewers[index]) {
+	        this.setState({ currentIndex: index });
+	      }
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var viewers = this.props.viewers;
-	      var currentViewer = this.state.currentViewer;
+	      var currentIndex = this.state.currentIndex;
 
+	      var viewer = viewers[currentIndex];
 
-	      _Keyboard2.default.define(currentViewer.identifier);
-	      this._notify_viewer_loaded(currentViewer);
+	      _Keyboard2.default.define(viewer.identifier);
 
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'viewers-containers' },
-	        viewers.map(function (viewer) {
-	          return _react2.default.createElement(_ViewerComponent2.default, {
-	            url: viewer.url,
-	            relations: viewer.relations,
-	            identifier: viewer.identifier,
-	            key: viewer.identifier,
-	            title: viewer.title,
-	            primary_color: viewer.primary_color,
-	            secondary_color: viewer.secondary_color,
-	            type: viewer.type,
-	            defaultViewerIdentifier: currentViewer.identifier
-	          });
-	        })
-	      );
-	    }
-	  }, {
-	    key: '_notify_viewer_loaded',
-	    value: function _notify_viewer_loaded(viewer) {
-	      var channel = postal.channel();
-
-	      channel.publish('viewer_loaded', {
-	        element: viewer.identifier
+	      return _react2.default.createElement(_Viewer2.default, {
+	        url: viewer.url,
+	        relations: viewer.relations,
+	        identifier: viewer.identifier,
+	        key: viewer.identifier,
+	        title: viewer.title,
+	        primaryColor: viewer.primary_color,
+	        secondaryColor: viewer.secondary_color,
+	        type: viewer.type
 	      });
 	    }
 	  }]);
 
-	  return Index;
-	}(_react2.default.Component);
+	  return App;
+	}(_react.Component);
 
-	Index.propTypes = {
-	  viewers: _react.PropTypes.array.isRequired
+	var array = _react.PropTypes.array;
+
+	App.propTypes = {
+	  viewers: array.isRequired
 	};
 
 	module.exports = {
 	  initialize: function initialize(selector, configuration) {
-	    _reactDom2.default.render(_react2.default.createElement(Index, { viewers: configuration }), document.querySelector(selector));
+	    _reactDom2.default.render(_react2.default.createElement(App, { viewers: configuration }), document.querySelector(selector));
 	  }
 	};
 
@@ -22033,126 +22024,6 @@ var MinimalViewer =
 /* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var postal = __webpack_require__(181);
-
-	var Keyboard = {
-	  define: function define(identifier) {
-	    var _this = this;
-
-	    this.identifier = identifier;
-
-	    document.onkeydown = function (e) {
-	      var channel = postal.channel();
-	      var leftArrowCode = '37';
-	      var upArrowCode = '38';
-	      var rightArrowCode = '39';
-	      var downArrowCode = '40';
-	      var enterCode = '13';
-	      var spaceBarCode = '32';
-
-	      if (e.keyCode == leftArrowCode) {
-	        e.preventDefault();
-	        channel.publish('action_triggered', {
-	          name: 'prev',
-	          element: _this.identifier
-	        });
-	      }
-
-	      if (e.keyCode == upArrowCode) {
-	        e.preventDefault();
-	        channel.publish('action_triggered', {
-	          name: 'previous_viewer',
-	          element: _this.identifier
-	        });
-	      }
-
-	      if (e.keyCode == rightArrowCode) {
-	        e.preventDefault();
-	        channel.publish('action_triggered', {
-	          name: 'next',
-	          element: _this.identifier
-	        });
-	      }
-
-	      if (e.keyCode == enterCode || e.keyCode == spaceBarCode) {
-	        e.preventDefault();
-	        channel.publish('action_triggered', {
-	          name: 'open',
-	          element: _this.identifier
-	        });
-	      }
-
-	      if (e.keyCode == downArrowCode) {
-	        e.preventDefault();
-	        channel.publish('action_triggered', {
-	          name: 'next_viewer',
-	          element: _this.identifier
-	        });
-	      }
-	    };
-
-	    window.addEventListener('touchstart', this._handleTouchStart.bind(this), false);
-	    window.addEventListener('touchmove', this._handleTouchMove.bind(this), false);
-	    window.addEventListener('touchend', this._handleTouchEnd.bind(this), false);
-	  },
-	  _handleTouchStart: function _handleTouchStart(e) {
-	    this.touch = {
-	      start: {
-	        x: e.touches[0].clientX,
-	        y: e.touches[0].clientY
-	      },
-	      current: {}
-	    };
-	  },
-	  _handleTouchMove: function _handleTouchMove(e) {
-	    var story = document.querySelector('#story-link');
-	    var xDiff = e.touches[0].clientX - this.touch.start.x;
-
-	    this.touch.current = {
-	      x: e.touches[0].clientX,
-	      y: e.touches[0].clientY
-	    };
-
-	    story.style.transform = 'translateX(' + xDiff + 'px)';
-	  },
-	  _handleTouchEnd: function _handleTouchEnd() {
-	    var channel = postal.channel();
-
-	    if (!this.touch.current.x) {
-	      return channel.publish('action_triggered', {
-	        name: 'open',
-	        element: this.identifier
-	      });
-	    }
-
-	    var story = document.querySelector('#story-link');
-	    story.style.transform = '';
-
-	    if (this.touch.current.x < this.touch.start.x) {
-	      channel.publish('action_triggered', {
-	        name: 'next',
-	        element: this.identifier
-	      });
-	    } else {
-	      channel.publish('action_triggered', {
-	        name: 'prev',
-	        element: this.identifier
-	      });
-	    }
-	  }
-	};
-
-	exports.default = Keyboard;
-
-/***/ },
-/* 181 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * postal - Pub/Sub library providing wildcard subscriptions, complex message handling, etc.  Works server and client-side.
 	 * Author: Jim Cowart (http://ifandelse.com)
@@ -22165,7 +22036,7 @@ var MinimalViewer =
 		
 		if ( true ) {
 			// AMD. Register as an anonymous module.
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(182) ], __WEBPACK_AMD_DEFINE_RESULT__ = function( _ ) {
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(181) ], __WEBPACK_AMD_DEFINE_RESULT__ = function( _ ) {
 				return factory( _, root );
 			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 		
@@ -22642,7 +22513,7 @@ var MinimalViewer =
 
 		noConflict: function noConflict() {
 			
-			if ( typeof window === "undefined" || ( typeof window !== "undefined" && "function" === "function" && __webpack_require__(184) ) ) {
+			if ( typeof window === "undefined" || ( typeof window !== "undefined" && "function" === "function" && __webpack_require__(183) ) ) {
 				throw new Error( "noConflict can only be used in browser clients which aren't using AMD modules" );
 			}
 			global.postal = prevPostal;
@@ -22835,7 +22706,7 @@ var MinimalViewer =
 
 
 /***/ },
-/* 182 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -39904,10 +39775,10 @@ var MinimalViewer =
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(183)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(182)(module)))
 
 /***/ },
-/* 183 */
+/* 182 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -39923,12 +39794,113 @@ var MinimalViewer =
 
 
 /***/ },
-/* 184 */
+/* 183 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _postal = __webpack_require__(180);
+
+	var _postal2 = _interopRequireDefault(_postal);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var LEFT = 37,
+	    UP = 38,
+	    RIGHT = 39,
+	    DOWN = 40,
+	    ENTER = 13,
+	    SPACE = 32;
+
+	var VALID_KEY_CODES = [LEFT, UP, RIGHT, DOWN, ENTER, SPACE];
+	var Keyboard = {
+	  define: function define(identifier) {
+	    var _this = this;
+
+	    this.identifier = identifier;
+
+	    document.onkeydown = function (e) {
+	      var keyCode = e.keyCode;
+
+	      if (!VALID_KEY_CODES.includes(keyCode)) return;
+	      e.preventDefault();
+
+	      switch (keyCode) {
+	        case UP:
+	          return _this._triggerAction('previous_viewer');
+	        case DOWN:
+	          return _this._triggerAction('next_viewer');
+	        case LEFT:
+	          return _this._triggerAction('prev');
+	        case RIGHT:
+	          return _this._triggerAction('next');
+	        case ENTER:
+	        case SPACE:
+	          return _this._triggerAction('open');
+	      }
+	    };
+
+	    window.addEventListener('touchstart', this._handleTouchStart.bind(this), false);
+	    window.addEventListener('touchmove', this._handleTouchMove.bind(this), false);
+	    window.addEventListener('touchend', this._handleTouchEnd.bind(this), false);
+	  },
+	  _triggerAction: function _triggerAction(name) {
+	    var channel = _postal2.default.channel();
+
+	    channel.publish('action_triggered', {
+	      name: name,
+	      element: this.identifier
+	    });
+	  },
+	  _handleTouchStart: function _handleTouchStart(e) {
+	    this.touch = {
+	      start: {
+	        x: e.touches[0].clientX,
+	        y: e.touches[0].clientY
+	      },
+	      current: {}
+	    };
+	  },
+	  _handleTouchMove: function _handleTouchMove(e) {
+	    var story = document.querySelector('#story-link');
+	    var xDiff = e.touches[0].clientX - this.touch.start.x;
+
+	    this.touch.current = {
+	      x: e.touches[0].clientX,
+	      y: e.touches[0].clientY
+	    };
+
+	    story.style.transform = 'translateX(' + xDiff + 'px)';
+	  },
+	  _handleTouchEnd: function _handleTouchEnd() {
+	    if (!this.touch.current.x) {
+	      return this._triggerAction('open');
+	    }
+
+	    var story = document.querySelector('#story-link');
+	    story.style.transform = '';
+
+	    if (this.touch.current.x < this.touch.start.x) {
+	      return this._triggerAction('next');
+	    } else {
+	      return this._triggerAction('prev');
+	    }
+	  }
+	};
+
+	exports.default = Keyboard;
 
 /***/ },
 /* 185 */
@@ -39946,6 +39918,10 @@ var MinimalViewer =
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _postal = __webpack_require__(180);
+
+	var _postal2 = _interopRequireDefault(_postal);
+
 	var _Downloader = __webpack_require__(186);
 
 	var _Downloader2 = _interopRequireDefault(_Downloader);
@@ -39954,25 +39930,13 @@ var MinimalViewer =
 
 	var _Storage2 = _interopRequireDefault(_Storage);
 
-	var _ItemTemplate = __webpack_require__(188);
+	var _Layout = __webpack_require__(188);
 
-	var _ItemTemplate2 = _interopRequireDefault(_ItemTemplate);
+	var _Layout2 = _interopRequireDefault(_Layout);
 
-	var _CounterComponent = __webpack_require__(191);
+	var _ComponentBuilder = __webpack_require__(190);
 
-	var _CounterComponent2 = _interopRequireDefault(_CounterComponent);
-
-	var _TitleComponent = __webpack_require__(192);
-
-	var _TitleComponent2 = _interopRequireDefault(_TitleComponent);
-
-	var _LoadingComponent = __webpack_require__(193);
-
-	var _LoadingComponent2 = _interopRequireDefault(_LoadingComponent);
-
-	var _EmptyStoriesComponent = __webpack_require__(194);
-
-	var _EmptyStoriesComponent2 = _interopRequireDefault(_EmptyStoriesComponent);
+	var _ComponentBuilder2 = _interopRequireDefault(_ComponentBuilder);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39982,163 +39946,94 @@ var MinimalViewer =
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var postal = __webpack_require__(181);
+	var INITIAL_INDEX = -1;
 
-	var ViewerComponent = function (_React$Component) {
-	  _inherits(ViewerComponent, _React$Component);
+	var Viewer = function (_Component) {
+	  _inherits(Viewer, _Component);
 
-	  function ViewerComponent(props) {
-	    _classCallCheck(this, ViewerComponent);
+	  function Viewer() {
+	    _classCallCheck(this, Viewer);
 
-	    var _this = _possibleConstructorReturn(this, (ViewerComponent.__proto__ || Object.getPrototypeOf(ViewerComponent)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Viewer.__proto__ || Object.getPrototypeOf(Viewer)).call(this));
 
-	    _this.state = {};
+	    _this.state = {
+	      currentIndex: INITIAL_INDEX,
+	      isEmpty: false,
+	      isLoading: true,
+	      storyQueue: []
+	    };
+
+	    _this._actionStory = _this._actionStory.bind(_this);
+	    _this._store = _this._store.bind(_this);
 	    return _this;
 	  }
 
-	  _createClass(ViewerComponent, [{
+	  _createClass(Viewer, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
-	      var _this2 = this;
+	      var _props = this.props,
+	          url = _props.url,
+	          relations = _props.relations;
 
-	      var url = this.props.url;
 
-
-	      this.setState({ loading: true, empty: false });
-
-	      _Downloader2.default.create(url, function (stories) {
-	        _this2._store(stories);
-	      });
+	      _Downloader2.default.create(url, this._store, relations.Root);
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      var channel = postal.channel();
-	      var identifier = this.props.identifier;
-
-
-	      channel.subscribe('action_triggered', function (data) {
-	        if (data.element == identifier) {
-	          if (data.name == 'next') {
-	            this._next();
-	          }
-
-	          if (data.name == 'prev') {
-	            this._prev();
-	          }
-
-	          if (data.name == 'open') {
-	            this._open_current();
-	          }
-	        }
-	      }.bind(this));
-
-	      channel.subscribe('viewer_loaded', function (data) {
-	        if (data.element == identifier) {
-	          this._mark_first_as_viewed();
-	        }
-	      }.bind(this));
+	      var channel = _postal2.default.channel();
+	      this.subscription = channel.subscribe('action_triggered', this._actionStory);
 	    }
 	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _state = this.state,
-	          loading = _state.loading,
-	          currentStory = _state.currentStory,
-	          storyQueue = _state.storyQueue,
-	          currentStoryIndex = _state.currentStoryIndex,
-	          empty = _state.empty;
-	      var _props = this.props,
-	          relations = _props.relations,
-	          identifier = _props.identifier,
-	          title = _props.title,
-	          primary_color = _props.primary_color,
-	          secondary_color = _props.secondary_color,
-	          type = _props.type,
-	          defaultViewerIdentifier = _props.defaultViewerIdentifier;
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.subscription.unsubscribe();
+	    }
+	  }, {
+	    key: '_actionStory',
+	    value: function _actionStory(_ref) {
+	      var element = _ref.element,
+	          name = _ref.name;
+	      var identifier = this.props.identifier;
 
+	      if (element !== identifier) return;
 
-	      if (empty) {
-	        return _react2.default.createElement(
-	          'div',
-	          { id: identifier, style: { color: primary_color }, className: 'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '') },
-	          _react2.default.createElement(_TitleComponent2.default, {
-	            Text: title
-	          }),
-	          _react2.default.createElement(_EmptyStoriesComponent2.default, null)
-	        );
+	      switch (name) {
+	        case 'next':
+	          this._next();
+	          break;
+
+	        case 'prev':
+	          this._prev();
+	          break;
+
+	        case 'open':
+	          this._openCurrent();
+	          break;
 	      }
-
-	      if (loading || currentStory === undefined) {
-	        return _react2.default.createElement(
-	          'div',
-	          { id: identifier, style: { color: primary_color }, className: 'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '') },
-	          _react2.default.createElement(_TitleComponent2.default, {
-	            Text: title
-	          }),
-	          _react2.default.createElement(_LoadingComponent2.default, { SecondaryColor: secondary_color })
-	        );
-	      }
-
-	      return _react2.default.createElement(
-	        'div',
-	        { id: identifier, style: { color: primary_color }, className: 'full-screen ' + (identifier == defaultViewerIdentifier ? 'visible' : '') },
-	        _react2.default.createElement(_TitleComponent2.default, {
-	          Text: title
-	        }),
-	        _ItemTemplate2.default.forType(type, relations, currentStory, secondary_color),
-	        _react2.default.createElement(_CounterComponent2.default, {
-	          Current: String(currentStoryIndex + 1),
-	          Total: String(storyQueue.length),
-	          SecondaryColor: secondary_color
-	        })
-	      );
 	    }
 	  }, {
 	    key: '_store',
 	    value: function _store(stories) {
 	      var _props2 = this.props,
-	          defaultViewerIdentifier = _props2.defaultViewerIdentifier,
 	          identifier = _props2.identifier,
 	          relations = _props2.relations;
 
 	      var readStories = _Storage2.default.retrieve(identifier);
 	      var filteredStories = stories.filter(function (story) {
-	        return readStories.indexOf(story[relations.ElementKey]) == -1;
+	        return readStories.indexOf(story[relations.ElementKey]) === -1;
 	      });
 
 	      this.setState({
-	        storyQueue: filteredStories,
-	        loading: false,
-	        empty: filteredStories.length == 0,
-	        currentStoryIndex: 0
+	        currentIndex: 0,
+	        isEmpty: filteredStories.length === 0,
+	        isLoading: false,
+	        storyQueue: filteredStories
 	      });
-
-	      if (filteredStories.length > 0) {
-	        this._show(filteredStories[0]);
-	        if (defaultViewerIdentifier == identifier) {
-	          this._mark_first_as_viewed();
-	        }
-	      }
 	    }
 	  }, {
-	    key: '_setByIndex',
-	    value: function _setByIndex(index) {
-	      var story = this.state.storyQueue[index];
-
-	      this.setState({ currentStoryIndex: index });
-
-	      this._show(story);
-	      this._mark_as_viewed(story);
-	    }
-	  }, {
-	    key: '_show',
-	    value: function _show(story) {
-	      this.setState({ currentStory: story });
-	    }
-	  }, {
-	    key: '_mark_as_viewed',
-	    value: function _mark_as_viewed(story) {
+	    key: '_markAsViewed',
+	    value: function _markAsViewed(story) {
 	      var _props3 = this.props,
 	          identifier = _props3.identifier,
 	          relations = _props3.relations;
@@ -40149,58 +40044,100 @@ var MinimalViewer =
 	      }
 	    }
 	  }, {
-	    key: '_mark_first_as_viewed',
-	    value: function _mark_first_as_viewed() {
-	      var storyQueue = this.state.storyQueue;
-
-	      var first_story = storyQueue[0];
-
-	      this._mark_as_viewed(first_story);
-	    }
-	  }, {
 	    key: '_next',
 	    value: function _next() {
-	      var existsNextStory = this.state.currentStoryIndex < this.state.storyQueue.length - 1;
+	      var _state = this.state,
+	          currentIndex = _state.currentIndex,
+	          storyQueue = _state.storyQueue;
 
-	      if (existsNextStory) {
-	        this._setByIndex(this.state.currentStoryIndex + 1);
+	      var index = currentIndex + 1;
+	      var validIndex = index <= storyQueue.length - 1;
+
+	      if (validIndex) {
+	        this.setState({ currentIndex: index });
 	      }
 	    }
 	  }, {
 	    key: '_prev',
 	    value: function _prev() {
-	      var existsPreviousStory = this.state.currentStoryIndex > 0;
+	      var currentIndex = this.state.currentIndex;
 
-	      if (existsPreviousStory) {
-	        this._setByIndex(this.state.currentStoryIndex - 1);
+	      var index = currentIndex - 1;
+	      var validIndex = index >= 0;
+
+	      if (validIndex) {
+	        this.setState({ currentIndex: index });
 	      }
 	    }
 	  }, {
-	    key: '_open_current',
-	    value: function _open_current() {
-	      this._open(this.state.currentStory.url);
+	    key: '_openCurrent',
+	    value: function _openCurrent() {
+	      var _state2 = this.state,
+	          currentIndex = _state2.currentIndex,
+	          storyQueue = _state2.storyQueue;
+
+	      var currentStory = storyQueue[currentIndex];
+	      this._open(currentStory.url);
 	    }
 	  }, {
 	    key: '_open',
 	    value: function _open(url) {
 	      window.open(url);
 	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _state3 = this.state,
+	          currentIndex = _state3.currentIndex,
+	          isEmpty = _state3.isEmpty,
+	          isLoading = _state3.isLoading,
+	          storyQueue = _state3.storyQueue;
+	      var _props4 = this.props,
+	          identifier = _props4.identifier,
+	          primaryColor = _props4.primaryColor,
+	          relations = _props4.relations,
+	          secondaryColor = _props4.secondaryColor,
+	          title = _props4.title,
+	          type = _props4.type;
+
+
+	      var currentStory = storyQueue && storyQueue[currentIndex];
+	      this._markAsViewed(currentStory);
+
+	      return _react2.default.createElement(
+	        _Layout2.default,
+	        { id: identifier, color: primaryColor, title: title },
+	        _react2.default.createElement(_ComponentBuilder2.default, {
+	          isEmpty: isEmpty,
+	          isLoading: isLoading,
+	          queueIndex: String(currentIndex + 1),
+	          queueSize: String(storyQueue.length),
+	          relations: relations,
+	          color: secondaryColor,
+	          story: currentStory,
+	          type: type
+	        })
+	      );
+	    }
 	  }]);
 
-	  return ViewerComponent;
-	}(_react2.default.Component);
+	  return Viewer;
+	}(_react.Component);
 
-	ViewerComponent.propTypes = {
-	  identifier: _react.PropTypes.string.isRequired,
-	  url: _react.PropTypes.string.isRequired,
-	  relations: _react.PropTypes.object.isRequired,
-	  title: _react.PropTypes.string.isRequired,
-	  primary_color: _react.PropTypes.string.isRequired,
-	  secondary_color: _react.PropTypes.string.isRequired,
-	  type: _react.PropTypes.string.isRequired
+	var string = _react.PropTypes.string,
+	    object = _react.PropTypes.object;
+
+	Viewer.propTypes = {
+	  identifier: string.isRequired,
+	  primaryColor: string.isRequired,
+	  relations: object.isRequired,
+	  secondaryColor: string.isRequired,
+	  title: string.isRequired,
+	  type: string.isRequired,
+	  url: string.isRequired
 	};
 
-	exports.default = ViewerComponent;
+	exports.default = Viewer;
 
 /***/ },
 /* 186 */
@@ -40212,14 +40149,18 @@ var MinimalViewer =
 	  value: true
 	});
 	var Downloader = {
-	  create: function create(url, fn) {
+	  create: function create(url, fn, root) {
 	    this.API_URL = url;
-	    this.download_stories(fn);
+	    this.download_stories(fn, root);
 	  },
-	  download_stories: function download_stories(fn) {
+	  download_stories: function download_stories(fn, root) {
 	    fetch(this.API_URL).then(function (response) {
 	      response.json().then(function (parsed) {
-	        return fn(parsed);
+	        if (root) {
+	          fn(parsed[root]);
+	        } else {
+	          fn(parsed);
+	        }
 	      });
 	    });
 	  }
@@ -40236,26 +40177,25 @@ var MinimalViewer =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	var EMPTY = [];
+
 	var Storage = {
 	  retrieve: function retrieve(identifier) {
 	    var items = JSON.parse(localStorage.getItem("viewer_" + identifier));
 
-	    return items || this._empty();
+	    return items || EMPTY;
 	  },
 	  store: function store(identifier, element) {
-	    var alreadyStored = this.retrieve(identifier);
-	    var isPendingToBeRegistered = alreadyStored.indexOf(element) == -1;
+	    var store = this.retrieve(identifier);
+	    var isAlreadyRegistered = store.includes(element);
 
-	    if (isPendingToBeRegistered) {
-	      alreadyStored.push(element);
+	    if (isAlreadyRegistered) return;
 
-	      localStorage.setItem("viewer_" + identifier, JSON.stringify(alreadyStored));
-	    }
-	  },
-	  _empty: function _empty() {
-	    return [];
+	    store.push(element);
+	    localStorage.setItem("viewer_" + identifier, JSON.stringify(store));
 	  }
 	};
+
 	exports.default = Storage;
 
 /***/ },
@@ -40272,36 +40212,27 @@ var MinimalViewer =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _HeadlineItemComponent = __webpack_require__(189);
+	var _Title = __webpack_require__(189);
 
-	var _HeadlineItemComponent2 = _interopRequireDefault(_HeadlineItemComponent);
-
-	var _StoryComponent = __webpack_require__(190);
-
-	var _StoryComponent2 = _interopRequireDefault(_StoryComponent);
+	var _Title2 = _interopRequireDefault(_Title);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ItemTemplate = {
-	  forType: function forType(type, relations, story, secondary_color) {
-	    var template = this.templates[type];
-	    var data = {
-	      Link: story[relations.Link],
-	      Subtitle: story[relations.Subtitle],
-	      Title: story[relations.Title],
-	      SecondaryColor: secondary_color
-	    };
-
-	    return _react2.default.createElement(template, data);
-	  },
-
-	  templates: {
-	    'headline': _HeadlineItemComponent2.default,
-	    'story': _StoryComponent2.default
-	  }
+	var Layout = function Layout(_ref) {
+	  var children = _ref.children,
+	      color = _ref.color,
+	      id = _ref.id,
+	      title = _ref.title;
+	  return _react2.default.createElement(
+	    'div',
+	    { id: id, style: { color: color }, className: 'full-screen visible' },
+	    _react2.default.createElement('div', { className: 'top-progress-bar' }),
+	    _react2.default.createElement(_Title2.default, { text: title }),
+	    children
+	  );
 	};
 
-	exports.default = ItemTemplate;
+	exports.default = Layout;
 
 /***/ },
 /* 189 */
@@ -40313,84 +40244,26 @@ var MinimalViewer =
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(3);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var HeadlineItemComponent = function (_React$Component) {
-	  _inherits(HeadlineItemComponent, _React$Component);
-
-	  function HeadlineItemComponent() {
-	    _classCallCheck(this, HeadlineItemComponent);
-
-	    return _possibleConstructorReturn(this, (HeadlineItemComponent.__proto__ || Object.getPrototypeOf(HeadlineItemComponent)).apply(this, arguments));
-	  }
-
-	  _createClass(HeadlineItemComponent, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var SecondaryColor = this.props.SecondaryColor;
-
-
-	      document.querySelector('#url-container').onmouseover = function () {
-	        this.style.color = SecondaryColor;
-	      };
-
-	      document.querySelector('#url-container').onmouseout = function () {
-	        this.style.color = 'inherit';
-	      };
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _props = this.props,
-	          Link = _props.Link,
-	          Title = _props.Title,
-	          Subtitle = _props.Subtitle;
-
-
-	      return _react2.default.createElement(
-	        'div',
-	        { id: 'story-link', className: 'container Headline' },
-	        _react2.default.createElement(
-	          'div',
-	          { id: 'url-container', className: 'Title' },
-	          _react2.default.createElement(
-	            'a',
-	            { href: Link, id: 'story-url', target: '_blank' },
-	            Title
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'p',
-	          { className: 'Subtitle' },
-	          Subtitle
-	        )
-	      );
-	    }
-	  }]);
-
-	  return HeadlineItemComponent;
-	}(_react2.default.Component);
-
-	HeadlineItemComponent.propTypes = {
-	  Title: _react.PropTypes.string.isRequired,
-	  Subtitle: _react.PropTypes.string,
-	  Link: _react.PropTypes.string.isRequired,
-	  SecondaryColor: _react.PropTypes.string.isRequired
+	var Title = function Title(_ref) {
+	  var text = _ref.text;
+	  return _react2.default.createElement(
+	    'div',
+	    { id: 'title', className: 'main-title' },
+	    _react2.default.createElement(
+	      'h1',
+	      null,
+	      text
+	    )
+	  );
 	};
 
-	exports.default = HeadlineItemComponent;
+	exports.default = Title;
 
 /***/ },
 /* 190 */
@@ -40402,90 +40275,44 @@ var MinimalViewer =
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _react = __webpack_require__(3);
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _EmptyStories = __webpack_require__(191);
+
+	var _EmptyStories2 = _interopRequireDefault(_EmptyStories);
+
+	var _Loading = __webpack_require__(192);
+
+	var _Loading2 = _interopRequireDefault(_Loading);
+
+	var _Story = __webpack_require__(193);
+
+	var _Story2 = _interopRequireDefault(_Story);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	var ComponentBuilder = function ComponentBuilder(_ref) {
+	  var color = _ref.color,
+	      isEmpty = _ref.isEmpty,
+	      isLoading = _ref.isLoading,
+	      story = _objectWithoutProperties(_ref, ['color', 'isEmpty', 'isLoading']);
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	  if (isEmpty) return _react2.default.createElement(_EmptyStories2.default, null);
 
-	var StoryComponent = function (_React$Component) {
-	  _inherits(StoryComponent, _React$Component);
+	  if (isLoading) return _react2.default.createElement(_Loading2.default, { color: color });
 
-	  function StoryComponent() {
-	    _classCallCheck(this, StoryComponent);
-
-	    return _possibleConstructorReturn(this, (StoryComponent.__proto__ || Object.getPrototypeOf(StoryComponent)).apply(this, arguments));
-	  }
-
-	  _createClass(StoryComponent, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var SecondaryColor = this.props.SecondaryColor;
-
-
-	      document.querySelector('#url-container').onmouseover = function () {
-	        this.style.color = SecondaryColor;
-	      };
-
-	      document.querySelector('#url-container').onmouseout = function () {
-	        this.style.color = 'inherit';
-	      };
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _props = this.props,
-	          Link = _props.Link,
-	          Title = _props.Title,
-	          Subtitle = _props.Subtitle;
-
-
-	      return _react2.default.createElement(
-	        'div',
-	        { id: 'story-link', className: 'container Story' },
-	        _react2.default.createElement(
-	          'div',
-	          { id: 'url-container', className: 'Title' },
-	          _react2.default.createElement(
-	            'a',
-	            { href: Link, id: 'story-url', target: '_blank' },
-	            Title
-	          )
-	        ),
-	        _react2.default.createElement('div', { className: 'Separator' }),
-	        _react2.default.createElement(
-	          'p',
-	          { className: 'Subtitle' },
-	          Subtitle
-	        )
-	      );
-	    }
-	  }, {
-	    key: 'coloreIt',
-	    value: function coloreIt(color) {
-	      this.style.color = color;
-	    }
-	  }]);
-
-	  return StoryComponent;
-	}(_react2.default.Component);
-
-	StoryComponent.propTypes = {
-	  Title: _react.PropTypes.string.isRequired,
-	  Subtitle: _react.PropTypes.string,
-	  Link: _react.PropTypes.string.isRequired,
-	  SecondaryColor: _react.PropTypes.string.isRequired
+	  return _react2.default.createElement(_Story2.default, _extends({}, story, {
+	    color: color
+	  }));
 	};
 
-	exports.default = StoryComponent;
+	exports.default = ComponentBuilder;
 
 /***/ },
 /* 191 */
@@ -40497,70 +40324,29 @@ var MinimalViewer =
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(3);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var CounterComponent = function (_React$Component) {
-	  _inherits(CounterComponent, _React$Component);
-
-	  function CounterComponent() {
-	    _classCallCheck(this, CounterComponent);
-
-	    return _possibleConstructorReturn(this, (CounterComponent.__proto__ || Object.getPrototypeOf(CounterComponent)).apply(this, arguments));
-	  }
-
-	  _createClass(CounterComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      var _props = this.props,
-	          Current = _props.Current,
-	          Total = _props.Total,
-	          SecondaryColor = _props.SecondaryColor;
-
-
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'counter' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'indicator' },
-	          _react2.default.createElement(
-	            'p',
-	            { id: 'stories-counter' },
-	            _react2.default.createElement(
-	              'span',
-	              { className: 'current', style: { color: SecondaryColor } },
-	              Current
-	            ),
-	            '/',
-	            Total
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return CounterComponent;
-	}(_react2.default.Component);
-
-	CounterComponent.propTypes = {
-	  Current: _react.PropTypes.string.isRequired,
-	  Total: _react.PropTypes.string.isRequired,
-	  SecondaryColor: _react.PropTypes.string.isRequired
+	var EmptyStories = function EmptyStories() {
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'empty-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'empty-message' },
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        'Woops! There is nothing else for you, yet...'
+	      )
+	    )
+	  );
 	};
 
-	exports.default = CounterComponent;
+	exports.default = EmptyStories;
 
 /***/ },
 /* 192 */
@@ -40572,55 +40358,26 @@ var MinimalViewer =
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(3);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var TitleComponent = function (_React$Component) {
-	  _inherits(TitleComponent, _React$Component);
-
-	  function TitleComponent() {
-	    _classCallCheck(this, TitleComponent);
-
-	    return _possibleConstructorReturn(this, (TitleComponent.__proto__ || Object.getPrototypeOf(TitleComponent)).apply(this, arguments));
-	  }
-
-	  _createClass(TitleComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      var Text = this.props.Text;
-
-
-	      return _react2.default.createElement(
-	        'div',
-	        { id: 'title', className: 'main-title' },
-	        _react2.default.createElement(
-	          'h1',
-	          null,
-	          Text
-	        )
-	      );
-	    }
-	  }]);
-
-	  return TitleComponent;
-	}(_react2.default.Component);
-
-	TitleComponent.propTypes = {
-	  Text: _react.PropTypes.string.isRequired
+	var Loading = function Loading(_ref) {
+	  var color = _ref.color;
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'loader-container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'loader', style: { color: color, background: color } },
+	      'Loading...'
+	    )
+	  );
 	};
 
-	exports.default = TitleComponent;
+	exports.default = Loading;
 
 /***/ },
 /* 193 */
@@ -40632,55 +40389,60 @@ var MinimalViewer =
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(3);
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _HeadlineItem = __webpack_require__(194);
+
+	var _HeadlineItem2 = _interopRequireDefault(_HeadlineItem);
+
+	var _StoryItem = __webpack_require__(195);
+
+	var _StoryItem2 = _interopRequireDefault(_StoryItem);
+
+	var _Counter = __webpack_require__(196);
+
+	var _Counter2 = _interopRequireDefault(_Counter);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var TEMPLATES = {
+	  'headline': _HeadlineItem2.default,
+	  'story': _StoryItem2.default
+	};
+	var DEFAULT_TEMPLATE = _HeadlineItem2.default;
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	var Story = function Story(_ref) {
+	  var color = _ref.color,
+	      queueIndex = _ref.queueIndex,
+	      queueSize = _ref.queueSize,
+	      relations = _ref.relations,
+	      story = _ref.story,
+	      type = _ref.type;
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	  var Template = TEMPLATES[type] || DEFAULT_TEMPLATE;
+	  var progress = queueIndex / queueSize * 100;
 
-	var LoadingComponent = function (_React$Component) {
-	  _inherits(LoadingComponent, _React$Component);
-
-	  function LoadingComponent() {
-	    _classCallCheck(this, LoadingComponent);
-
-	    return _possibleConstructorReturn(this, (LoadingComponent.__proto__ || Object.getPrototypeOf(LoadingComponent)).apply(this, arguments));
-	  }
-
-	  _createClass(LoadingComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      var SecondaryColor = this.props.SecondaryColor;
-
-
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'loader-container' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'loader', style: { color: SecondaryColor, background: SecondaryColor } },
-	          'Loading...'
-	        )
-	      );
-	    }
-	  }]);
-
-	  return LoadingComponent;
-	}(_react2.default.Component);
-
-	LoadingComponent.propTypes = {
-	  SecondaryColor: _react.PropTypes.string.isRequired
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'full-screen visible' },
+	    _react2.default.createElement(Template, {
+	      color: color,
+	      link: story[relations.Link],
+	      subtitle: story[relations.Subtitle],
+	      title: story[relations.Title]
+	    }),
+	    _react2.default.createElement(_Counter2.default, {
+	      current: queueIndex,
+	      total: queueSize,
+	      color: color,
+	      progress: progress
+	    })
+	  );
 	};
 
-	exports.default = LoadingComponent;
+	exports.default = Story;
 
 /***/ },
 /* 194 */
@@ -40692,7 +40454,68 @@ var MinimalViewer =
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _react = __webpack_require__(3);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var HeadLineItem = function HeadLineItem(_ref) {
+	  var color = _ref.color,
+	      link = _ref.link,
+	      subtitle = _ref.subtitle,
+	      title = _ref.title;
+
+	  var handleMouseOver = function handleMouseOver(e) {
+	    var style = e.target.style;
+
+
+	    style.color = color;
+	  };
+
+	  var handleMouseOut = function handleMouseOut(e) {
+	    var style = e.target.style;
+
+
+	    style.color = 'inherit';
+	  };
+
+	  return _react2.default.createElement(
+	    'div',
+	    { id: 'story-link', className: 'container Headline' },
+	    _react2.default.createElement(
+	      'div',
+	      {
+	        id: 'url-container',
+	        className: 'Title',
+	        onMouseOver: handleMouseOver,
+	        onMouseOut: handleMouseOut
+	      },
+	      _react2.default.createElement(
+	        'a',
+	        { href: link, id: 'story-url', target: '_blank' },
+	        title
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'p',
+	      { className: 'Subtitle' },
+	      subtitle
+	    )
+	  );
+	};
+
+	exports.default = HeadLineItem;
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _react = __webpack_require__(3);
 
@@ -40700,44 +40523,102 @@ var MinimalViewer =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var StoryItem = function StoryItem(_ref) {
+	  var color = _ref.color,
+	      link = _ref.link,
+	      subtitle = _ref.subtitle,
+	      title = _ref.title;
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	  var handleMouseOver = function handleMouseOver(e) {
+	    var style = e.target.style;
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var EmptyStoriesComponent = function (_React$Component) {
-	  _inherits(EmptyStoriesComponent, _React$Component);
+	    style.color = color;
+	  };
 
-	  function EmptyStoriesComponent() {
-	    _classCallCheck(this, EmptyStoriesComponent);
+	  var handleMouseOut = function handleMouseOut(e) {
+	    var style = e.target.style;
 
-	    return _possibleConstructorReturn(this, (EmptyStoriesComponent.__proto__ || Object.getPrototypeOf(EmptyStoriesComponent)).apply(this, arguments));
-	  }
 
-	  _createClass(EmptyStoriesComponent, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
+	    style.color = 'inherit';
+	  };
+
+	  return _react2.default.createElement(
+	    'div',
+	    { id: 'story-link', className: 'container Story' },
+	    _react2.default.createElement(
+	      'div',
+	      {
+	        id: 'url-container',
+	        className: 'Title',
+	        onMouseOver: handleMouseOver,
+	        onMouseOut: handleMouseOut
+	      },
+	      _react2.default.createElement(
+	        'a',
+	        { href: link, id: 'story-url', target: '_blank' },
+	        title
+	      )
+	    ),
+	    _react2.default.createElement('div', { className: 'Separator' }),
+	    _react2.default.createElement(
+	      'p',
+	      { className: 'Subtitle' },
+	      subtitle
+	    )
+	  );
+	};
+
+	exports.default = StoryItem;
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(3);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Counter = function Counter(_ref) {
+	  var color = _ref.color,
+	      current = _ref.current,
+	      total = _ref.total,
+	      progress = _ref.progress;
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement('div', { className: 'top-progress-bar', style: { backgroundColor: color, width: progress + '%' } }),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'counter' },
+	      _react2.default.createElement(
 	        'div',
-	        { className: 'empty-container' },
+	        { className: 'indicator' },
 	        _react2.default.createElement(
-	          'div',
-	          { className: 'empty-message' },
+	          'p',
+	          { id: 'stories-counter' },
 	          _react2.default.createElement(
-	            'p',
-	            null,
-	            'Woops! There is nothing else for you, yet...'
-	          )
+	            'span',
+	            { className: 'current', style: { color: color } },
+	            current
+	          ),
+	          '/',
+	          total
 	        )
-	      );
-	    }
-	  }]);
+	      )
+	    )
+	  );
+	};
 
-	  return EmptyStoriesComponent;
-	}(_react2.default.Component);
-
-	exports.default = EmptyStoriesComponent;
+	exports.default = Counter;
 
 /***/ }
 /******/ ]);
