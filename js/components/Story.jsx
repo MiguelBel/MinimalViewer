@@ -12,6 +12,7 @@ const DEFAULT_TEMPLATE = HeadlineItem
 
 const Story = ({ color, queueIndex, queueSize, relations, story, type }) => {
   const Template = TEMPLATES[type] || DEFAULT_TEMPLATE
+  let progress = (queueIndex / queueSize) * 100
 
   return (
     <div className='full-screen visible'>
@@ -25,6 +26,7 @@ const Story = ({ color, queueIndex, queueSize, relations, story, type }) => {
         current={queueIndex}
         total={queueSize}
         color={color}
+        progress={progress}
       />
     </div>
   )
