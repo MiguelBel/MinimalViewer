@@ -1,6 +1,6 @@
 {
   "name": "hackernewsviewer",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Simple HackerNews viewer",
   "main": "app.js",
   "scripts": {
