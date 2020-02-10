@@ -29,7 +29,8 @@
     "webpack": "^1.13.3",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.2",
-    "whatwg-fetch": "^2.0.0"
+    "whatwg-fetch": "^2.0.0",
+    "jmespath": "0.15.0"
   },
   "devDependencies": {
     "babel-preset-stage-0": "^6.16.0",

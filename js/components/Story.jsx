@@ -1,4 +1,5 @@
 import React from 'react'
+import jmespath from 'jmespath'
 
 import HeadlineItem from './HeadlineItem'
 import StoryItem from './StoryItem'
@@ -18,9 +19,9 @@ const Story = ({ color, queueIndex, queueSize, relations, story, type }) => {
     <div className='full-screen visible'>
       <Template
         color={color}
-        link={story[relations.Link]}
-        subtitle={story[relations.Subtitle]}
-        title={story[relations.Title]}
+        link={jmespath.search(story, relations.Link)}
+        subtitle={jmespath.search(story, relations.Subtitle)}
+        title={jmespath.search(story, relations.Title)}
       />
       <Counter
         current={queueIndex}

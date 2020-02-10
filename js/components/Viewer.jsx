@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import jmespath from 'jmespath'
 import postal from 'postal'
 
 import Downloader from '../Downloader'
@@ -62,7 +63,7 @@ class Viewer extends Component {
     const { identifier, relations } = this.props
     const readStories = Storage.retrieve(identifier)
     const filteredStories = stories.filter(story =>
-      readStories.indexOf(story[relations.ElementKey]) === -1
+      readStories.indexOf(jmespath.search(story, relations.ElementKey)) === -1
     )
 
     this.setState({
@@ -77,7 +78,7 @@ class Viewer extends Component {
     const { identifier, relations } = this.props
 
     if (story) {
-      Storage.store(identifier, story[relations.ElementKey])
+      Storage.store(identifier, jmespath.search(story, relations.ElementKey))
     }
   }
 

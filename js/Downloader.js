@@ -1,3 +1,5 @@
+import jmespath from 'jmespath'
+
 const Downloader = {
   create (url, fn, root) {
     this.API_URL = url
@@ -8,7 +10,7 @@ const Downloader = {
     fetch(this.API_URL).then(response => {
       response.json().then(parsed => {
         if (root) {
-          fn(parsed[root])
+          fn(jmespath.search(parsed, root))
         } else {
           fn(parsed)
         }

@@ -67,6 +67,19 @@ A viewer is composed of:
     - __Link:__ Link for the story.
     - __ElementKey:__ (optional) The element on which basis you don't want to show the item again. Can be one of the prior or a different one also included in the mapping.
     - __Root:__ (optional) If the json have a root you can configure it here.
+
+ The relations accept complex queries as in [JMESPath](https://github.com/jmespath/jmespath.js), i.e:
+
+```
+  relations: {
+    ElementKey: 'data.id',
+    Title: 'data.title',
+    Subtitle: 'data.domain',
+    Link: 'data.url',
+    Root: 'wadus.another_key'
+  },
+```
+
 - **primary_color:** The primary color of the viewer.
 - **secondary_color:** The secondary color of the viewer.
 - **type:** The template choosen (can be headline or story).

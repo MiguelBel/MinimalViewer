@@ -19,10 +19,11 @@
           identifier: 'minimal_viewer',
           url: 'http://localhost:9400',
           relations: {
-            ElementKey: 'id',
-            Title: 'title',
-            Subtitle: 'domain',
-            Link: 'url'
+            ElementKey: 'data.id',
+            Title: 'data.title',
+            Subtitle: 'data.domain',
+            Link: 'data.url',
+            Root: 'wadus.another_key'
           },
           primary_color: 'black',
           secondary_color: 'orange',
