@@ -103,9 +103,12 @@ class Viewer extends Component {
   }
 
   _openCurrent () {
+    const { relations } = this.props
     const { currentIndex, storyQueue } = this.state
     const currentStory = storyQueue[currentIndex]
-    this._open(currentStory.url)
+    const url = jmespath.search(currentStory, relations.Link)
+
+    this._open(url)
   }
 
   _open (url) {
