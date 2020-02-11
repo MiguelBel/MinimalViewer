@@ -110,13 +110,13 @@ The ports are mapped this way:
 The app is intended to be served with statics. If you want to serve the web through statics then the only files which you need are located under the `/dist` folder:
 
 - `index.html` | Is an example of how to use the next two files
-- `minimal_viewer.css`
-- `minimal_viewer.js`
+- `minimal_viewer-VERSION.css`
+- `minimal_viewer-VERSION.js`
 
 In order to build the `dist` directory you can execute:
 
 ```
-$ docker-compose exec minimal_viewer npm run build
+$ make create_version
 ```
 
 ### Contributors

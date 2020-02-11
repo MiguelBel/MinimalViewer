@@ -1,11 +1,12 @@
 {
   "name": "hackernewsviewer",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Simple HackerNews viewer",
   "main": "app.js",
   "scripts": {
     "build": "webpack -g ; cp index.html dist/index.html ; cp css/app.css dist/minimal_viewer.css",
-    "lint": "eslint js"
+    "lint": "eslint js",
+    "get-version": "echo $npm_package_version"
   },
   "repository": {
     "type": "git",

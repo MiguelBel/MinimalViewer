@@ -40988,12 +40988,15 @@ var MinimalViewer =
 	  }, {
 	    key: '_openCurrent',
 	    value: function _openCurrent() {
+	      var relations = this.props.relations;
 	      var _state2 = this.state,
 	          currentIndex = _state2.currentIndex,
 	          storyQueue = _state2.storyQueue;
 
 	      var currentStory = storyQueue[currentIndex];
-	      this._open(currentStory.url);
+	      var url = _jmespath2.default.search(currentStory, relations.Link);
+
+	      this._open(url);
 	    }
 	  }, {
 	    key: '_open',
